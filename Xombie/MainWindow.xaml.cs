@@ -11,7 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Resources;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Xombie
@@ -21,6 +24,8 @@ namespace Xombie
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static int x;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +38,7 @@ namespace Xombie
             openFileDialog.Filter = "xom files (*.xom)|*.xom|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
+                txtEditor.Text = "";
                 XOM_TYPE.GetSupported();
                 XOM_File file = new XOM_File();
                 file.FileGame = WormsGame.W3D;
@@ -85,7 +91,9 @@ namespace Xombie
                     }
                     else
                     {
-                        txtEditor.Text += "UnknownContainer\n";
+                        // Add types from https://github.com/AlexBond2/Xom2Xml/blob/main/XOMSCHM/W3D/XOMSCHM.dat
+                        txtEditor.Text += container;
+                        txtEditor.Text += '\n';
                     }
                 }
             }

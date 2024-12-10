@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using CrateModLoader.GameSpecific.WormsForts.XOM;
 using System.IO;
 using System.Reflection;
+using System.Windows.Resources;
+using System.Xml.Linq;
 
 namespace CrateModLoader.GameSpecific.WormsForts
 {
@@ -108,6 +110,21 @@ namespace CrateModLoader.GameSpecific.WormsForts
             {
                 Console.WriteLine("Not an XOM file!");
                 return;
+            }
+
+            // Get custom container types for Worms 3D
+            Dictionary<string, CustomContainer> customContainers = new Dictionary<string, CustomContainer>();
+            Uri uri = new Uri("/XOMSCHM.xml", UriKind.Relative);
+            StreamResourceInfo info = System.Windows.Application.GetResourceStream(uri);
+            XDocument doc = XDocument.Load(info.Stream);
+            var containers = doc.Element("xomSCHM")?.Element("XContainer");
+            if (containers != null)
+            {
+                foreach (XElement container in containers.Elements())
+                {
+                    string name = container.Name.LocalName;
+                    Console.WriteLine(name);
+                }
             }
 
             Types = new List<XOM_TYPE>();
