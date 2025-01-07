@@ -116,14 +116,6 @@ public class GeckoReader {
    */
   private void assertValidAddress(long targetAddress) {
     switch(DolUtil.getSection(targetAddress)) {
-      case SBSS2:
-        String msg1 = "Target address of code is within the bounds of the sbss2 (0x8027C560 - 0x8027C578). ";
-        msg1 += "This is a problem since the sbss2 is zero initialized when the game launches: ";
-        throw new IllegalArgumentException(msg1 + String.format("%08x", targetAddress));
-      case SBSS:
-        String msg2 = "Target address of code is within the bounds of the sbss (0x80276FE0 - 0x80277CA0). ";
-        msg2 += "This is a problem since the sbss is zero initialized when the game launches: ";
-        throw new IllegalArgumentException(msg2 + String.format("%08x", targetAddress));
       case BSS:
         String message = "Target address of code is within the bounds of the bss (0x802229E0 - 0x80276920). ";
         message += "This is a problem since the bss is zero initialized when the game launches: ";

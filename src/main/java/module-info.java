@@ -4,6 +4,7 @@ module com.github.nicholasmoser {
   exports com.github.nicholasmoser.utils;
 
   opens com.github.nicholasmoser to javafx.fxml;
+  opens com.github.nicholasmoser.tools to javafx.fxml;
 
   requires com.google.common;
 

@@ -39,7 +39,7 @@ public class Xombie extends Application {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("tools.fxml"));
       Scene scene = new Scene(loader.load());
-      initDarkMode(scene);
+      GUIUtils.initDarkMode(scene);
       ToolController controller = loader.getController();
       controller.init();
       GUIUtils.setIcons(primaryStage);
@@ -51,10 +51,6 @@ public class Xombie extends Application {
       LOGGER.log(Level.SEVERE, "Failed to Launch", e);
       Message.error("Failed to Launch", e.getMessage());
     }
-  }
-
-  private void initDarkMode(Scene scene) {
-    scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
   }
 
   /**

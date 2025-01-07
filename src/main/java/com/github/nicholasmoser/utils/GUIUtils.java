@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
@@ -167,6 +168,20 @@ public class GUIUtils {
   }
 
   /**
+   * Sets the application icons on the dialog.
+   *
+   * @param dialog The dialog to set the icons for.
+   */
+  public static void setIcons(Dialog dialog) {
+    Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+    ObservableList<Image> icons = stage.getIcons();
+    icons.add(WORM_16);
+    icons.add(WORM_32);
+    icons.add(WORM_64);
+    icons.add(WORM_128);
+  }
+
+  /**
    * Gets a node at a specified row and column in a GridPane.
    * https://stackoverflow.com/questions/20655024/javafx-gridpane-retrieve-specific-cell-content/20656861#20656861
    *
@@ -189,5 +204,9 @@ public class GUIUtils {
    */
   public static boolean isWindows() {
     return System.getProperty("os.name").startsWith("Windows");
+  }
+
+  public static void initDarkMode(Scene scene) {
+    scene.getStylesheets().add(GUIUtils.class.getResource("stylesheet.css").toExternalForm());
   }
 }
