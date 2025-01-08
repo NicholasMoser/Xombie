@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 
 public class ISOCreatorTool {
 
-  private static final Logger LOGGER = Logger.getLogger(ISOExtractorTool.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(ISOCreatorTool.class.getName());
 
   /**
    * Extracts a GameCube ISO.
@@ -37,13 +37,12 @@ public class ISOCreatorTool {
       public Void call() {
         try {
           updateMessage("Parsing directory...");
-          DirectoryParser dirParser = new DirectoryParser(inputPath.get(), true);
+          DirectoryParser dirParser = new DirectoryParser(inputPath.get(), false);
           updateMessage("Parsing ISO header...");
           ISOHeader isoHeader = dirParser.getISOHeader();
-          updateMessage("Creating ISO creator...");
-          ISOCreator creator = new ISOCreator(inputPath.get(), outputPath.get());
           updateMessage("Creating ISO...");
-          creator.create(true, isoHeader);
+          ISOCreator creator = new ISOCreator(inputPath.get(), outputPath.get());
+          creator.create(false, isoHeader);
           updateMessage("Complete");
           updateProgress(1, 1);
           return null;
@@ -56,11 +55,11 @@ public class ISOCreatorTool {
 
     Stage loadingWindow = GUIUtils.createLoadingWindow("Creating ISO", task, 450, 200);
     task.setOnSucceeded(event -> {
-      Message.info("FPK Repacked", "FPK repacking complete.");
+      Message.info("ISO Created", "ISO creation complete.");
       loadingWindow.close();
     });
     task.setOnFailed(event -> {
-      Message.error("Failed to Repack FPK", "See log for more information.");
+      Message.error("Failed to Create ISO", "See log for more information.");
       loadingWindow.close();
     });
     new Thread(task).start();

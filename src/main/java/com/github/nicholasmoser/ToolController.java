@@ -1,6 +1,7 @@
 package com.github.nicholasmoser;
 
 import com.github.nicholasmoser.tools.CodeCaveTool;
+import com.github.nicholasmoser.tools.FSTCompareTool;
 import com.github.nicholasmoser.tools.ISOCreatorTool;
 import com.github.nicholasmoser.tools.ISOExtractorTool;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ToolController {
   private static final String ISO_EXTRACTOR_GC = "ISO Extractor (GameCube)";
   private static final String ISO_CREATOR_GC = "ISO Creator (GameCube)";
   private static final String CODE_CAVE_TOOL = "Code Cave Tool";
+  private static final String FILE_SYSTEM_TABLE_COMPARE = "File System Table Compare";
 
   @FXML
   private ListView<String> tools;
@@ -35,6 +37,7 @@ public class ToolController {
     items.add(ISO_EXTRACTOR_GC);
     items.add(ISO_CREATOR_GC);
     items.add(CODE_CAVE_TOOL);
+    items.add(FILE_SYSTEM_TABLE_COMPARE);
   }
 
   @FXML
@@ -63,6 +66,7 @@ public class ToolController {
         case ISO_EXTRACTOR_GC -> ISOExtractorTool.extractGameCubeISO();
         case ISO_CREATOR_GC -> ISOCreatorTool.run();
         case CODE_CAVE_TOOL -> CodeCaveTool.run();
+        case FILE_SYSTEM_TABLE_COMPARE -> FSTCompareTool.run();
       }
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, "An error was encountered when running the tool.", e);
