@@ -142,13 +142,13 @@ public class DirectoryParser {
 
   /**
    * Updates the byte-aligned position of a particular ISOFile relative to the current position.
-   * All files must be 4-byte aligned. Music files (.trk) are 0x8000-byte aligned.
+   * All files must be 4-byte aligned. Music files (.trk and .dsp) are 0x8000-byte aligned.
    *
    * @param isoFile The ISOFile to update the position of.
    */
   private void updateByteAlignedPosition(ISOFile isoFile) {
     currentPosition -= isoFile.getLen();
-    if (isoFile.getName().endsWith(".trk")) {
+    if (isoFile.getName().endsWith(".trk") || isoFile.getName().endsWith(".dsp")) {
       currentPosition = ByteUtils.previousAlignedPos(currentPosition, 0x8000);
     } else {
       currentPosition = ByteUtils.previousAlignedPos(currentPosition, 4);
@@ -178,9 +178,13 @@ public class DirectoryParser {
               if (Files.isDirectory(path)) {
                 addDirectory(path, "");
               } else {
-                currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
                 int size = (int) Files.size(path);
                 String fileName = path.getFileName().toString();
+                if (fileName.endsWith(".trk") || fileName.endsWith(".dsp")) {
+                  currentPosition = ByteUtils.nextAlignedPos(currentPosition, 0x8000);
+                } else {
+                  currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
+                }
                 ISOFile file = new ISOFile.Builder()
                     .setPos(currentPosition)
                     .setLen(size)
@@ -231,9 +235,13 @@ public class DirectoryParser {
                   currentPosition = 0x45532B80;
                 }
 
-                currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
                 int size = (int) Files.size(path);
                 String fileName = path.getFileName().toString();
+                if (fileName.endsWith(".trk") || fileName.endsWith(".dsp")) {
+                  currentPosition = ByteUtils.nextAlignedPos(currentPosition, 0x8000);
+                } else {
+                  currentPosition = ByteUtils.nextAlignedPos(currentPosition, 4);
+                }
                 ISOFile fileItem = new ISOFile.Builder()
                     .setPos(currentPosition)
                     .setLen(size)

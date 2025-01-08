@@ -83,10 +83,10 @@ public class FSTCompareTool {
               if (firstItem instanceof ISOFile firstFile && secondItem instanceof ISOFile secondFile) {
                 result.append(firstFile.getGamePath()).append('\n');
                 if (firstFile.getLen() != secondFile.getLen()) {
-                  result.append(String.format("  Different lengths: %d vs %d\n", firstFile.getLen(), secondFile.getLen()));
+                  result.append(String.format("  Different lengths: 0x%X vs 0x%X\n", firstFile.getLen(), secondFile.getLen()));
                 }
                 if (firstFile.getPos() != secondFile.getPos()) {
-                  result.append(String.format("  Different position: %d vs %d\n", firstFile.getPos(), secondFile.getPos()));
+                  result.append(String.format("  Different position: 0x%X vs 0x%X\n", firstFile.getPos(), secondFile.getPos()));
                 }
               }
             }

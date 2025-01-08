@@ -15,5 +15,5 @@ public class ISO {
   public static final int DISC_SIZE = 0x57058000;
 
   /* Number of files and directories in the files directory in Worms 3D */
-  public static final int W3D_ISO_ITEMS_SIZE = 563;
+  public static final int W3D_ISO_ITEMS_SIZE = 6239;
 }
