@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.xom;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class XContainerBuilder {
     private String name;
@@ -13,7 +13,8 @@ public class XContainerBuilder {
     private String id;
     private String xtype;
     private boolean xpack;
-    private Set<String> valueAttrs;
+    private String href;
+    private Map<String, ValueType> valueAttrs;
 
     public XContainerBuilder setName(String name) {
         this.name = name;
@@ -60,12 +61,17 @@ public class XContainerBuilder {
         return this;
     }
 
-    public XContainerBuilder setValueAttrs(Set<String> valueAttrs) {
+    public XContainerBuilder setValueAttrs(Map<String, ValueType> valueAttrs) {
         this.valueAttrs = valueAttrs;
         return this;
     }
 
+    public XContainerBuilder setHref(String href) {
+        this.href = href;
+        return this;
+    }
+
     public XContainer createXContainer() {
-        return new XContainer(name, value, children, guid, xver, noCntr, id, xtype, xpack, valueAttrs);
+        return new XContainer(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs);
     }
 }

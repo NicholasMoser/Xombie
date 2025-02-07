@@ -1,7 +1,7 @@
 package com.github.nicholasmoser.xom;
 
 import com.google.common.collect.Sets;
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -9,13 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-
 public class XomScheme {
     private static final Set<String> ALL_ATTRIBUTES = new HashSet<>();
-    private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack");
+    private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack", "href");
 
     public static Set<String> getAllAttributes() {
         return Collections.unmodifiableSet(ALL_ATTRIBUTES);
@@ -28,7 +24,8 @@ public class XomScheme {
             Document doc = builder.parse(is);
             doc.normalizeDocument();
             doc.getDocumentElement().normalize();
-            return getChildren(doc.getChildNodes());
+            Element root = doc.getDocumentElement();
+            return getChildren(root.getChildNodes());
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -56,13 +53,15 @@ public class XomScheme {
         xContainer.setChildren(getChildren(node.getChildNodes()));
 
         // Handle attributes
-        Set<String> valueAttributes = new LinkedHashSet<>();
+        TreeMap<String, ValueType> valueAttributes = new TreeMap<>();
         NamedNodeMap attrs = node.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {
-            String name = attrs.item(i).getNodeName();
+            Node attr = attrs.item(i);
+            String name = attr.getNodeName();
             ALL_ATTRIBUTES.add(name);
             if (!NON_VALUE_ATTRS.contains(name)) {
-                valueAttributes.add(name);
+                ValueType value = ValueType.valueOf(attr.getNodeValue());
+                valueAttributes.put(name, value);
             }
         }
         xContainer.setValueAttrs(valueAttributes);
@@ -89,6 +88,10 @@ public class XomScheme {
         Node xPack = attrs.getNamedItem("Xpack");
         if (xPack != null) {
             xContainer.setXpack(Boolean.parseBoolean(xPack.getNodeValue()));
+        }
+        Node href = attrs.getNamedItem("href");
+        if (href != null) {
+            xContainer.setHref(href.getNodeValue());
         }
         return xContainer.createXContainer();
     }
