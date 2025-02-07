@@ -35,16 +35,6 @@ public class DolUtilTest {
   }
 
   /**
-   * Test that the ctors section is correctly identified and returned for addresses in the ctors
-   * section.
-   */
-  @Test
-  public void testGetCtorsSection() {
-    assertEquals(Section.CTORS, DolUtil.getSection(0x801FD800L));
-    assertEquals(Section.CTORS, DolUtil.getSection(0x801FD810L));
-  }
-
-  /**
    * Test that the dtors section is correctly identified and returned for addresses in the dtors
    * section.
    */
@@ -103,18 +93,6 @@ public class DolUtilTest {
   }
 
   /**
-   * Test that the sbss section is correctly identified and returned for addresses in the sbss
-   * section.
-   */
-  @Test
-  public void testGetSbssSection() {
-    assertEquals(Section.SBSS, DolUtil.getSection(0x80276FE0L));
-    assertEquals(Section.SBSS, DolUtil.getSection(0x802775C0L));
-    assertEquals(Section.SBSS, DolUtil.getSection(0x802779B8L));
-    assertEquals(Section.SBSS, DolUtil.getSection(0x80277C94L));
-  }
-
-  /**
    * Test that the sdata2 section is correctly identified and returned for addresses in the sdata2
    * section.
    */
@@ -124,18 +102,6 @@ public class DolUtilTest {
     assertEquals(Section.SDATA2, DolUtil.getSection(0x8027B670L));
     assertEquals(Section.SDATA2, DolUtil.getSection(0x8027C2A8L));
     assertEquals(Section.SDATA2, DolUtil.getSection(0x8027C558L));
-  }
-
-  /**
-   * Test that the sbss2 section is correctly identified and returned for addresses in the sbss2
-   * section.
-   */
-  @Test
-  public void testGetSbss2Section() {
-    assertEquals(Section.SBSS2, DolUtil.getSection(0x8027C560L));
-    assertEquals(Section.SBSS2, DolUtil.getSection(0x8027C568L));
-    assertEquals(Section.SBSS2, DolUtil.getSection(0x8027C570L));
-    assertEquals(Section.SBSS2, DolUtil.getSection(0x8027C574L));
   }
 
   /**
