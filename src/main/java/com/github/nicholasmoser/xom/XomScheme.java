@@ -1,57 +1,96 @@
 package com.github.nicholasmoser.xom;
 
+import com.google.common.collect.Sets;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 public class XomScheme {
-    public static void get() throws IOException {
+    private static final Set<String> ALL_ATTRIBUTES = new HashSet<>();
+    private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack");
+
+    public static Set<String> getAllAttributes() {
+        return Collections.unmodifiableSet(ALL_ATTRIBUTES);
+    }
+
+    public static List<XContainer> get() throws IOException {
         try (InputStream is = XomScheme.class.getResourceAsStream("XOMSCHM.xml")) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(is);
             doc.normalizeDocument();
             doc.getDocumentElement().normalize();
-
-            XContainer xGraphSet = getXContainer(doc.getElementsByTagName("XGraphSet").item(0));
-            XContainer xBaseResourceDescriptor = getXContainer(doc.getElementsByTagName("XBaseResourceDescriptor").item(0));
-            XContainer xAnimClipLibrary = getXContainer(doc.getElementsByTagName("XAnimClipLibrary").item(0));
-            XContainer xContainers = getXContainer(doc.getElementsByTagName("XContainer").item(0));
-            System.out.println();
+            return getChildren(doc.getChildNodes());
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
+    public static void fillNameMap(List<XContainer> xContainers, Map<String, XContainer> names) {
+        for (XContainer xContainer : xContainers) {
+            if (names.containsKey(xContainer.getName())) {
+                throw new IllegalStateException("Duplicate name: " + xContainer.getName());
+            }
+            if (xContainer.getGuid() != null) {
+                // only insert if there's a GUID
+                names.put(xContainer.getName(), xContainer);
+            }
+            fillNameMap(xContainer.getChildren(), names);
+        }
+    }
+
     private static XContainer getXContainer(Node node) {
-        String name = node.getNodeName();
-        String value = getValueText(node);
+        XContainerBuilder xContainer = new XContainerBuilder();
+        xContainer.setName(node.getNodeName());
+        xContainer.setValue(getValueText(node));
 
         // Handle children
-        List<XContainer> children = getChildren(node.getChildNodes());
+        xContainer.setChildren(getChildren(node.getChildNodes()));
 
         // Handle attributes
+        Set<String> valueAttributes = new LinkedHashSet<>();
         NamedNodeMap attrs = node.getAttributes();
-        Node guidNode = attrs.getNamedItem("guid");
-        String guid = guidNode != null ? guidNode.getNodeValue() : null;
-        Node XverNode = attrs.getNamedItem("Xver");
-        int Xver = XverNode != null ? Integer.parseInt(XverNode.getNodeValue()) : 0;
-        Node NoCntrNode = attrs.getNamedItem("NoCntr");
-        boolean NoCntr = NoCntrNode != null && Boolean.parseBoolean(NoCntrNode.getNodeValue());
-        Node idNode = attrs.getNamedItem("id");
-        String id = idNode != null ? idNode.getNodeValue() : null;
-        Node XtypeNode = attrs.getNamedItem("Xtype");
-        String Xtype = XtypeNode != null ? XtypeNode.getNodeValue() : null;
-        return new XContainer(name, value, children, guid, Xver, NoCntr, id, Xtype);
+        for (int i = 0; i < attrs.getLength(); i++) {
+            String name = attrs.item(i).getNodeName();
+            ALL_ATTRIBUTES.add(name);
+            if (!NON_VALUE_ATTRS.contains(name)) {
+                valueAttributes.add(name);
+            }
+        }
+        xContainer.setValueAttrs(valueAttributes);
+        Node guid = attrs.getNamedItem("guid");
+        if (guid != null) {
+            xContainer.setGuid(guid.getNodeValue());
+        }
+        Node xVer = attrs.getNamedItem("Xver");
+        if (xVer != null) {
+            xContainer.setXver(Integer.parseInt(xVer.getNodeValue()));
+        }
+        Node noCntr = attrs.getNamedItem("NoCntr");
+        if (noCntr != null) {
+            xContainer.setNoCntr(Boolean.parseBoolean(noCntr.getNodeValue()));
+        }
+        Node id = attrs.getNamedItem("id");
+        if (id != null) {
+            xContainer.setId(id.getNodeValue());
+        }
+        Node xType = attrs.getNamedItem("Xtype");
+        if (xType != null) {
+            xContainer.setXtype(xType.getNodeValue());
+        }
+        Node xPack = attrs.getNamedItem("Xpack");
+        if (xPack != null) {
+            xContainer.setXpack(Boolean.parseBoolean(xPack.getNodeValue()));
+        }
+        return xContainer.createXContainer();
     }
 
     private static List<XContainer> getChildren(NodeList children) {
