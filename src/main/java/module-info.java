@@ -20,4 +20,5 @@ module com.github.nicholasmoser {
   requires org.json;
   requires com.j2html;
   requires org.xerial.sqlitejdbc;
+    requires org.checkerframework.checker.qual;
 }
