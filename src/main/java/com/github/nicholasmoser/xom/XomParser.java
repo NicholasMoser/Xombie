@@ -2,7 +2,7 @@ package com.github.nicholasmoser.xom;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.GUID;
-import com.github.nicholasmoser.xom.ctnr.Container;
+import com.github.nicholasmoser.xom.ctnr.XContainer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,12 +35,12 @@ public class XomParser {
         int schmType = bs.readLEWord();
         bs.skipNBytes(0x8);
         StringTable stringTable = readStrTable(bs);
-        List<Container> containers = getContainers(bs, xomTypes, stringTable);
+        List<XContainer> containers = getContainers(bs, xomTypes, stringTable);
         return new Xom(xomHeader, xomTypes, schmType, stringTable, containers);
     }
 
-    private static List<Container> getContainers(ByteStream bs, List<XomType> types, StringTable stringTable) throws IOException {
-        List<Container> containers = new ArrayList<>();
+    private static List<XContainer> getContainers(ByteStream bs, List<XomType> types, StringTable stringTable) throws IOException {
+        List<XContainer> containers = new ArrayList<>();
         if (!bs.bytesAreLeft()) {
             return containers;
         }
@@ -51,7 +51,8 @@ public class XomParser {
                 }
                 // All containers have 3 or 5 null bytes following CTNR
                 bs.skipNBytes(3);
-                ContainerParser.parse(bs, type, types, stringTable);
+                XContainer container = XContainer.read(bs, type, types, stringTable);
+                containers.add(container);
             }
         }
         return containers;
