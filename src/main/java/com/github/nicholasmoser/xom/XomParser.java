@@ -35,11 +35,11 @@ public class XomParser {
         int schmType = bs.readLEWord();
         bs.skipNBytes(0x8);
         StringTable stringTable = readStrTable(bs);
-        List<Container> containers = getContainers(bs, xomTypes);
+        List<Container> containers = getContainers(bs, xomTypes, stringTable);
         return new Xom(xomHeader, xomTypes, schmType, stringTable, containers);
     }
 
-    private static List<Container> getContainers(ByteStream bs, List<XomType> types) throws IOException {
+    private static List<Container> getContainers(ByteStream bs, List<XomType> types, StringTable stringTable) throws IOException {
         List<Container> containers = new ArrayList<>();
         if (!bs.bytesAreLeft()) {
             return containers;
@@ -49,7 +49,9 @@ public class XomParser {
                 if (!CTNR.equals(new String(bs.readNBytes(4)))) {
                     throw new IOException("Failed to read CTNR field in xom header at offset " + (bs.offset() - 4));
                 }
-                ContainerParser.parse(bs, type);
+                // All containers have 3 or 5 null bytes following CTNR
+                bs.skipNBytes(3);
+                ContainerParser.parse(bs, type, types, stringTable);
             }
         }
         return containers;

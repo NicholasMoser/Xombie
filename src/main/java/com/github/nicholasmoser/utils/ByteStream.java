@@ -147,6 +147,20 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
+   * Read the next little-endian 4-byte float and return it.
+   *
+   * @return The little-endian 4-byte float.
+   * @throws IOException If an I/O error occurs.
+   */
+  public float readLEFloat() throws IOException {
+    byte[] bytes = new byte[4];
+    if (read(bytes) != 4) {
+      throw new IOException("Failed to read word at offset " + pos);
+    }
+    return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+  }
+
+  /**
    * Read the next null-terminated String and return it.
    *
    * @return The next null-terminated String.
@@ -160,6 +174,14 @@ public class ByteStream extends ByteArrayInputStream {
       curr = read();
     }
     return baos.toString(StandardCharsets.UTF_8);
+  }
+
+  public int readByte() throws IOException {
+    int value = read();
+    if (value == -1) {
+      throw new IOException("Failed to read byte");
+    }
+    return value;
   }
 
   /**

@@ -10,14 +10,14 @@ import java.io.InputStream;
 import java.util.*;
 
 public class XomScheme {
-    private static final Set<String> ALL_ATTRIBUTES = new HashSet<>();
     private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack", "href");
+    private static List<XContainer> CONTAINER_DEFINITIONS;
+    private static Map<String, XContainer> CONTAINER_NAME_MAP;
 
-    public static Set<String> getAllAttributes() {
-        return Collections.unmodifiableSet(ALL_ATTRIBUTES);
-    }
-
-    public static List<XContainer> get() throws IOException {
+    public static List<XContainer> getContainerDefinitions() throws IOException {
+        if (CONTAINER_DEFINITIONS != null) {
+            return CONTAINER_DEFINITIONS;
+        }
         try (InputStream is = XomScheme.class.getResourceAsStream("XOMSCHM.xml")) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -25,13 +25,26 @@ public class XomScheme {
             doc.normalizeDocument();
             doc.getDocumentElement().normalize();
             Element root = doc.getDocumentElement();
-            return getChildren(root.getChildNodes());
+            CONTAINER_DEFINITIONS = Collections.unmodifiableList(getChildren(root.getChildNodes()));
+            return CONTAINER_DEFINITIONS;
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
-    public static void fillNameMap(List<XContainer> xContainers, Map<String, XContainer> names) {
+    public static Map<String, XContainer> getContainerNameMap() throws IOException {
+        if (CONTAINER_NAME_MAP != null) {
+            return CONTAINER_NAME_MAP;
+        }
+        List<XContainer> xContainers = getContainerDefinitions();
+        Map<String, XContainer> names = new HashMap<>();
+        getContainerNameMap(xContainers, names);
+        CONTAINER_NAME_MAP = Collections.unmodifiableMap(names);
+        return CONTAINER_NAME_MAP;
+    }
+
+    private static void getContainerNameMap(List<XContainer> xContainers, Map<String, XContainer> names) {
+
         for (XContainer xContainer : xContainers) {
             if (names.containsKey(xContainer.getName())) {
                 throw new IllegalStateException("Duplicate name: " + xContainer.getName());
@@ -40,8 +53,8 @@ public class XomScheme {
                 // only insert if there's a GUID
                 names.put(xContainer.getName(), xContainer);
             }
-            fillNameMap(xContainer.getChildren(), names);
-        }
+            getContainerNameMap(xContainer.getChildren(), names);
+        };
     }
 
     private static XContainer getXContainer(Node node) {
@@ -58,7 +71,6 @@ public class XomScheme {
         for (int i = 0; i < attrs.getLength(); i++) {
             Node attr = attrs.item(i);
             String name = attr.getNodeName();
-            ALL_ATTRIBUTES.add(name);
             if (!NON_VALUE_ATTRS.contains(name)) {
                 ValueType value = ValueType.valueOf(attr.getNodeValue());
                 valueAttributes.put(name, value);
