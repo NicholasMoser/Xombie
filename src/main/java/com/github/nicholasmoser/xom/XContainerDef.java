@@ -3,10 +3,13 @@ package com.github.nicholasmoser.xom;
 import java.util.List;
 import java.util.Map;
 
-public class XContainer {
+/**
+ * A class representing the definition of an XContainer, but containing no actual XContainer data.
+ */
+public class XContainerDef {
     private final String name;
     private final String value;
-    private final List<XContainer> children;
+    private final List<XContainerDef> children;
     private final String guid;
     private final int Xver;
     private final boolean NoCntr;
@@ -16,7 +19,7 @@ public class XContainer {
     private final String href;
     private final Map<String, ValueType> valueAttrs;
 
-    public XContainer(String name, String value, List<XContainer> children, String guid, int xver, boolean noCntr, String id, String xtype, boolean xpack, String href, Map<String, ValueType> valueAttrs) {
+    public XContainerDef(String name, String value, List<XContainerDef> children, String guid, int xver, boolean noCntr, String id, String xtype, boolean xpack, String href, Map<String, ValueType> valueAttrs) {
         this.name = name;
         this.value = value;
         this.children = children;
@@ -42,7 +45,7 @@ public class XContainer {
         return value;
     }
 
-    public List<XContainer> getChildren() {
+    public List<XContainerDef> getChildren() {
         return children;
     }
 

@@ -1,7 +1,6 @@
 package com.github.nicholasmoser.xom;
 
 import com.github.nicholasmoser.utils.ByteStream;
-import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.xom.ctnr.*;
 
 import java.io.IOException;
@@ -16,17 +15,17 @@ public class ContainerParser {
     private static final String XDataBank = "XDataBank";
 
     public static void parse(ByteStream bs, XomType type, List<XomType> xomTypes, StringTable stringTable) throws IOException {
-        Map<String, XContainer> nameMap = XomScheme.getContainerNameMap();
+        Map<String, XContainerDef> nameMap = XomScheme.getContainerNameMap();
         String typeName = type.name();
-        XContainer container = nameMap.get(typeName);
+        XContainerDef container = nameMap.get(typeName);
         if (container == null) {
             throw new IOException("Failed to find definition for name " + typeName);
         }
         List<Value> values = new ArrayList<>();
 
         // Containers with special handling
+        // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
         switch(container.getName()) {
-            // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
             case XIntResourceDetails:
             case XUintResourceDetails:
                 XUInt value = XUInt.read(bs);
@@ -41,9 +40,9 @@ public class ContainerParser {
                 return;
             case XDataBank:
                 XUInt8 section = XUInt8.read(bs);
-                List<XContainer> children = container.getChildren();
+                List<XContainerDef> children = container.getChildren();
                 for (int i = 1; i < children.size(); i++) {
-                    XContainer child = children.get(i);
+                    XContainerDef child = children.get(i);
                     String href = child.getHref();
                     XomType xomType = getXomType(xomTypes, href);
                     XUInt8 pointer = XUInt8.read(bs);
@@ -58,7 +57,7 @@ public class ContainerParser {
                 break;
         }
         // Normal containers
-        for (XContainer child : container.getChildren()) {
+        for (XContainerDef child : container.getChildren()) {
             String value = child.getValue();
             if (value == null) {
                 throw new IOException("Value is null, unable to find value type");

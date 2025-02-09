@@ -11,10 +11,10 @@ import java.util.*;
 
 public class XomScheme {
     private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack", "href");
-    private static List<XContainer> CONTAINER_DEFINITIONS;
-    private static Map<String, XContainer> CONTAINER_NAME_MAP;
+    private static List<XContainerDef> CONTAINER_DEFINITIONS;
+    private static Map<String, XContainerDef> CONTAINER_NAME_MAP;
 
-    public static List<XContainer> getContainerDefinitions() throws IOException {
+    public static List<XContainerDef> getContainerDefinitions() throws IOException {
         if (CONTAINER_DEFINITIONS != null) {
             return CONTAINER_DEFINITIONS;
         }
@@ -32,33 +32,33 @@ public class XomScheme {
         }
     }
 
-    public static Map<String, XContainer> getContainerNameMap() throws IOException {
+    public static Map<String, XContainerDef> getContainerNameMap() throws IOException {
         if (CONTAINER_NAME_MAP != null) {
             return CONTAINER_NAME_MAP;
         }
-        List<XContainer> xContainers = getContainerDefinitions();
-        Map<String, XContainer> names = new HashMap<>();
-        getContainerNameMap(xContainers, names);
+        List<XContainerDef> xContainerDefs = getContainerDefinitions();
+        Map<String, XContainerDef> names = new HashMap<>();
+        getContainerNameMap(xContainerDefs, names);
         CONTAINER_NAME_MAP = Collections.unmodifiableMap(names);
         return CONTAINER_NAME_MAP;
     }
 
-    private static void getContainerNameMap(List<XContainer> xContainers, Map<String, XContainer> names) {
+    private static void getContainerNameMap(List<XContainerDef> xContainerDefs, Map<String, XContainerDef> names) {
 
-        for (XContainer xContainer : xContainers) {
-            if (names.containsKey(xContainer.getName())) {
-                throw new IllegalStateException("Duplicate name: " + xContainer.getName());
+        for (XContainerDef xContainerDef : xContainerDefs) {
+            if (names.containsKey(xContainerDef.getName())) {
+                throw new IllegalStateException("Duplicate name: " + xContainerDef.getName());
             }
-            if (xContainer.getGuid() != null) {
+            if (xContainerDef.getGuid() != null) {
                 // only insert if there's a GUID
-                names.put(xContainer.getName(), xContainer);
+                names.put(xContainerDef.getName(), xContainerDef);
             }
-            getContainerNameMap(xContainer.getChildren(), names);
+            getContainerNameMap(xContainerDef.getChildren(), names);
         };
     }
 
-    private static XContainer getXContainer(Node node) {
-        XContainerBuilder xContainer = new XContainerBuilder();
+    private static XContainerDef getXContainer(Node node) {
+        XContainerDefBuilder xContainer = new XContainerDefBuilder();
         xContainer.setName(node.getNodeName());
         xContainer.setValue(getValueText(node));
 
@@ -108,15 +108,15 @@ public class XomScheme {
         return xContainer.createXContainer();
     }
 
-    private static List<XContainer> getChildren(NodeList children) {
-        List<XContainer> xContainers = new ArrayList<>(children.getLength());
+    private static List<XContainerDef> getChildren(NodeList children) {
+        List<XContainerDef> xContainerDefs = new ArrayList<>(children.getLength());
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                xContainers.add(getXContainer(child));
+                xContainerDefs.add(getXContainer(child));
             }
         }
-        return xContainers;
+        return xContainerDefs;
     }
 
     private static String getValueText(Node node) {

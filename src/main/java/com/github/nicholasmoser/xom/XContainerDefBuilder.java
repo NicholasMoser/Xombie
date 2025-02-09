@@ -3,10 +3,10 @@ package com.github.nicholasmoser.xom;
 import java.util.List;
 import java.util.Map;
 
-public class XContainerBuilder {
+public class XContainerDefBuilder {
     private String name;
     private String value;
-    private List<XContainer> children;
+    private List<XContainerDef> children;
     private String guid;
     private int xver;
     private boolean noCntr;
@@ -16,62 +16,62 @@ public class XContainerBuilder {
     private String href;
     private Map<String, ValueType> valueAttrs;
 
-    public XContainerBuilder setName(String name) {
+    public XContainerDefBuilder setName(String name) {
         this.name = name;
         return this;
     }
 
-    public XContainerBuilder setValue(String value) {
+    public XContainerDefBuilder setValue(String value) {
         this.value = value;
         return this;
     }
 
-    public XContainerBuilder setChildren(List<XContainer> children) {
+    public XContainerDefBuilder setChildren(List<XContainerDef> children) {
         this.children = children;
         return this;
     }
 
-    public XContainerBuilder setGuid(String guid) {
+    public XContainerDefBuilder setGuid(String guid) {
         this.guid = guid;
         return this;
     }
 
-    public XContainerBuilder setXver(int xver) {
+    public XContainerDefBuilder setXver(int xver) {
         this.xver = xver;
         return this;
     }
 
-    public XContainerBuilder setNoCntr(boolean noCntr) {
+    public XContainerDefBuilder setNoCntr(boolean noCntr) {
         this.noCntr = noCntr;
         return this;
     }
 
-    public XContainerBuilder setId(String id) {
+    public XContainerDefBuilder setId(String id) {
         this.id = id;
         return this;
     }
 
-    public XContainerBuilder setXtype(String xtype) {
+    public XContainerDefBuilder setXtype(String xtype) {
         this.xtype = xtype;
         return this;
     }
 
-    public XContainerBuilder setXpack(boolean xpack) {
+    public XContainerDefBuilder setXpack(boolean xpack) {
         this.xpack = xpack;
         return this;
     }
 
-    public XContainerBuilder setValueAttrs(Map<String, ValueType> valueAttrs) {
+    public XContainerDefBuilder setValueAttrs(Map<String, ValueType> valueAttrs) {
         this.valueAttrs = valueAttrs;
         return this;
     }
 
-    public XContainerBuilder setHref(String href) {
+    public XContainerDefBuilder setHref(String href) {
         this.href = href;
         return this;
     }
 
-    public XContainer createXContainer() {
-        return new XContainer(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs);
+    public XContainerDef createXContainer() {
+        return new XContainerDef(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs);
     }
 }

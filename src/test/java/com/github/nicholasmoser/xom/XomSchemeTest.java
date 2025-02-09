@@ -15,8 +15,8 @@ public class XomSchemeTest {
 
   @Test
   public void testContainerRetrieval() throws Exception {
-    List<XContainer> containers = XomScheme.getContainerDefinitions();
-    Map<String, XContainer> names = XomScheme.getContainerNameMap();
+    List<XContainerDef> containers = XomScheme.getContainerDefinitions();
+    Map<String, XContainerDef> names = XomScheme.getContainerNameMap();
 
     // Assert that the retrievals are cached
     assertSame(containers, XomScheme.getContainerDefinitions());
