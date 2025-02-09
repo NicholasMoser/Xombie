@@ -2,24 +2,87 @@ package com.github.nicholasmoser.xom;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.GUID;
+import com.github.nicholasmoser.xom.ctnr.Container;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class XomParser {
     private static final int TYPE_HEADER_SIZE = 0x40;
     private static final String MAGIC = "MOIK";
     private static final String TYPE = "TYPE";
+    private static final String GUID_STR = "GUID";
+    private static final String SCHM = "SCHM";
+    private static final String STRS = "STRS";
+    private static final String CTNR = "CTNR";
 
     public static Xom parse(Path xomFile) throws IOException {
         byte[] bytes = Files.readAllBytes(xomFile);
         ByteStream bs = new ByteStream(bytes);
         XomHeader xomHeader = readXomHeader(bs);
         List<XomType> xomTypes = readTypeList(bs, xomHeader);
-        return new Xom(xomHeader, xomTypes);
+        if (xomHeader.flag() == 0x2) {
+            skipGUID(bs);
+        }
+        if (!SCHM.equals(new String(bs.readNBytes(4)))) {
+            throw new IOException("Failed to read SCHM field in xom header at offset " + (bs.offset() - 4));
+        }
+        int schmType = bs.readLEWord();
+        bs.skipNBytes(0x8);
+        StringTable stringTable = readStrTable(bs);
+        List<Container> containers = getContainers(bs, xomTypes);
+        return new Xom(xomHeader, xomTypes, schmType, stringTable, containers);
+    }
+
+    private static List<Container> getContainers(ByteStream bs, List<XomType> types) throws IOException {
+        List<Container> containers = new ArrayList<>();
+        if (!bs.bytesAreLeft()) {
+            return containers;
+        }
+        for (XomType type : types) {
+            for (int i = 0; i < type.size(); i++) {
+                if (!CTNR.equals(new String(bs.readNBytes(4)))) {
+                    throw new IOException("Failed to read CTNR field in xom header at offset " + (bs.offset() - 4));
+                }
+                ContainerParser.parse(bs, type);
+            }
+        }
+        return containers;
+    }
+
+    private static StringTable readStrTable(ByteStream bs) throws IOException {
+        if (!STRS.equals(new String(bs.readNBytes(4)))) {
+            throw new IOException("Failed to read STRS field in xom header at offset " + (bs.offset() - 4));
+        }
+        int sizeStrs = bs.readLEWord();
+        int lenStrs = bs.readLEWord();
+        List<Integer> offsets = new ArrayList<>(sizeStrs);
+        for (int i = 0; i < sizeStrs; i++) {
+            offsets.add(bs.readLEWord());
+        }
+        Map<Integer, String> offsetToStr = new TreeMap<>();
+        offsetToStr.put(0, "");
+        int start = bs.offset();
+        for (int i = 0; i < sizeStrs; i++) {
+            int current = bs.offset() - start;
+            String str = bs.readCString();
+            offsetToStr.put(current, str);
+        }
+        return new StringTable(sizeStrs, lenStrs, offsets, offsetToStr);
+    }
+
+    private static void skipGUID(ByteStream bs) throws IOException {
+        // skip 0x10 byte GUID field
+        byte[] guidBytes = bs.readNBytes(4);
+        if (!GUID_STR.equals(new String(guidBytes))) {
+            throw new IOException("Failed to read GUID field in xom header at offset " + (bs.offset() - 4));
+        }
+        bs.skipNBytes(0xC);
     }
 
     private static List<XomType> readTypeList(ByteStream bs, XomHeader xomHeader) throws IOException {
@@ -30,8 +93,8 @@ public class XomParser {
             if (!TYPE.equals(new String(bytes))) {
                 throw new IOException("Xom type does not start with word TYPE at offset " + (bs.offset() - 4));
             }
-            int subType = (bs.readWord() >> 0x18) & 0xFF;
-            int size = (bs.readWord() >> 0x10) & 0xFFFF;
+            int subType = bs.readLEWord();
+            int size = bs.readLEWord();
             bs.skipWord(); // padding
             byte[] guidBytes = bs.readNBytes(0x10);
             String guid = GUID.bytesToString(guidBytes);
@@ -48,15 +111,11 @@ public class XomParser {
             throw new IOException("Invalid xom, missing magic word " + MAGIC);
         }
         int flag = bs.readWord(); // 1 or 2
-        if (bs.skip(0x10) != 0x10) {
-            throw new IOException("Failed to skip first header padding");
-        }
-        int numberOfTypes = (bs.readWord() >> 0x18) & 0xFF;
-        int maxCount = (bs.readWord() >> 0x18) & 0xFF;
-        int rootCount = (bs.readWord() >> 0x18) & 0xFF;
-        if (bs.skip(0x1C) != 0x1C) {
-            throw new IOException("Failed to skip second header padding");
-        }
+        bs.skipNBytes(0x10);
+        int numberOfTypes = bs.readLEWord();
+        int maxCount = bs.readLEWord();
+        int rootCount = bs.readLEWord();
+        bs.skipNBytes(0x1C);
         return new XomHeader(flag, numberOfTypes, maxCount, rootCount);
     }
 }

@@ -119,6 +119,20 @@ public class ByteStream extends ByteArrayInputStream {
   }
 
   /**
+   * Read the next little-endian 4-byte word and return it.
+   *
+   * @return The little-endian 4-byte word.
+   * @throws IOException If an I/O error occurs.
+   */
+  public int readLEWord() throws IOException {
+    byte[] bytes = new byte[4];
+    if (read(bytes) != 4) {
+      throw new IOException("Failed to read word at offset " + pos);
+    }
+    return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+  }
+
+  /**
    * Read the next big-endian 4-byte float and return it.
    *
    * @return The big-endian 4-byte float.
