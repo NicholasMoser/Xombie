@@ -2,8 +2,10 @@ package com.github.nicholasmoser.xom;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.xom.ctnr.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,31 +22,34 @@ public class ContainerParser {
         if (container == null) {
             throw new IOException("Failed to find definition for name " + typeName);
         }
+        List<Value> values = new ArrayList<>();
+
+        // Containers with special handling
         switch(container.getName()) {
             // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
             case XIntResourceDetails:
             case XUintResourceDetails:
-                long value = ByteUtils.toUint32LE(bs.readNBytes(4));
-                String intName = readXString(bs, stringTable);
-                long flag = ByteUtils.toUint32LE(bs.readNBytes(4));
+                XUInt value = XUInt.read(bs);
+                XString intName = XString.read(bs, stringTable);
+                XUInt flag = XUInt.read(bs);
                 // TODO: Store
                 return;
             case XContainerResourceDetails:
-                int childContainerIndex = bs.readByte();
-                String containerName = readXString(bs, stringTable);
-                long containerFlag = ByteUtils.toUint32LE(bs.readNBytes(4));
+                XUInt8 childContainerIndex = XUInt8.read(bs);
+                XString containerName = XString.read(bs, stringTable);
+                XUInt containerFlag = XUInt.read(bs);
                 return;
             case XDataBank:
-                int section = bs.readByte();
+                XUInt8 section = XUInt8.read(bs);
                 List<XContainer> children = container.getChildren();
                 for (int i = 1; i < children.size(); i++) {
                     XContainer child = children.get(i);
                     String href = child.getHref();
                     XomType xomType = getXomType(xomTypes, href);
-                    int pointer = bs.readByte();
-                    if (pointer != 0 && xomType != null) {
+                    XUInt8 pointer = XUInt8.read(bs);
+                    if (pointer.get() != 0 && xomType != null) {
                         for (int j = 0; j < xomType.size(); j++) {
-                            int next = bs.readByte();
+                            XUInt8 next = XUInt8.read(bs);
                         }
                     }
                 }
@@ -52,6 +57,7 @@ public class ContainerParser {
             default:
                 break;
         }
+        // Normal containers
         for (XContainer child : container.getChildren()) {
             String value = child.getValue();
             if (value == null) {
@@ -60,24 +66,19 @@ public class ContainerParser {
             ValueType valueType = ValueType.valueOf(value);
             switch(valueType) {
                 case XFloat:
-                    float float_val = bs.readLEFloat();
-                    // TODO: Store
+                    values.add(XFloat.read(bs));
                     break;
                 case XBool:
-                    boolean bool_val = readXBool(bs);
-                    // TODO: Store
+                    values.add(XBool.read(bs));
                     break;
                 case XString:
-                    String string_val = readXString(bs, stringTable);
-                    // TODO: Store
+                    values.add(XString.read(bs, stringTable));
                     break;
                 case XUInt:
-                    long uint_val = ByteUtils.toUint32LE(bs.readNBytes(4));
-                    // TODO: Store
+                    values.add(XUInt.read(bs));
                     break;
                 case XUInt8:
-                    int uint8_val = bs.readByte();
-                    // TODO: Store
+                    values.add(XUInt8.read(bs));
                     break;
                 default:
                     throw new IOException("Type not yet implemented: " + valueType);
@@ -94,25 +95,5 @@ public class ContainerParser {
             }
         }
         return null;
-    }
-
-    private static boolean readXBool(ByteStream bs) throws IOException {
-        int bool_num = bs.read();
-        if (bool_num == -1) {
-            throw new IOException("Tried to read XBool but at end of stream");
-        }
-        return bool_num == 1;
-    }
-
-    private static String readXString(ByteStream bs, StringTable stringTable) throws IOException {
-        int str_index = bs.read();
-        if (str_index == -1) {
-            throw new IOException("Tried to read XString but at end of stream");
-        }
-        String string_val = stringTable.getString(str_index);
-        if (string_val == null) {
-            throw new IOException("Missing string from string table at index " + str_index);
-        }
-        return string_val;
     }
 }
