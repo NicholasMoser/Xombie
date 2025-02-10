@@ -71,34 +71,32 @@ public class XContainer implements Value {
         for (XContainerDef child : container.getChildren()) {
             String value = child.getValue();
             if (value == null) {
-                throw new IOException("Value is null, unable to find value type");
-            }
-            ValueType valueType = ValueType.valueOf(value);
-            switch(valueType) {
-                case XFloat:
-                    values.add(XFloat.read(child.getName(), bs));
-                    break;
-                case XBool:
-                    values.add(XBool.read(child.getName(), bs));
-                    break;
-                case XString:
-                    values.add(XString.read(child.getName(), bs, stringTable));
-                    break;
-                case XUInt:
-                    values.add(XUInt.read(child.getName(), bs));
-                    break;
-                case XUInt8:
-                    values.add(XUInt8.read(child.getName(), bs));
-                    break;
-                case XUInt16:
-                    values.add(XUInt16.read(child.getName(), bs));
-                    break;
-                default:
-                    throw new IOException("Type not yet implemented: " + valueType);
-
+                String xType = child.getXtype();
+                if (!"XCollection".equals(xType)) {
+                    throw new IOException("Unknown value and xType, xType is " + xType);
+                }
+                int size = bs.readByte();
+                for (int i = 0; i < size; i++) {
+                    values.add(XCollection.read(bs, child, stringTable));
+                }
+            } else {
+                ValueType valueType = ValueType.valueOf(value);
+                values.add(readValue(valueType, child.getName(), stringTable, bs));
             }
         }
         return new XContainer(typeName, values);
+    }
+
+    public static Value readValue(ValueType valueType, String name, StringTable stringTable, ByteStream bs) throws IOException {
+        return switch (valueType) {
+            case XFloat -> XFloat.read(name, bs);
+            case XBool -> XBool.read(name, bs);
+            case XString -> XString.read(name, bs, stringTable);
+            case XUInt -> XUInt.read(name, bs);
+            case XUInt8 -> XUInt8.read(name, bs);
+            case XUInt16 -> XUInt16.read(name, bs);
+            default -> throw new IOException("Type not yet implemented: " + valueType);
+        };
     }
 
     private static XomType getXomType(List<XomType> xomTypes, String name) {

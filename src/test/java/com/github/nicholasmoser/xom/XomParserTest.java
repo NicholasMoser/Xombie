@@ -15,7 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class XomParserTest {
     @Test
     public void testSpecificXomFile() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle00.xom");
+        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
         XomParser.parse(f);
     }
 
