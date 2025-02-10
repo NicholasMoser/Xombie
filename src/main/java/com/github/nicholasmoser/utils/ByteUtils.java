@@ -121,6 +121,19 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a 2-byte little-endian byte array to a uint16 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output uint16 (as an int).
+   */
+  public static int toUint16LE(byte[] bytes) {
+    ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).put(bytes).put(new byte[]{0, 0});
+    buffer.position(0);
+
+    return buffer.getInt();
+  }
+
+  /**
    * Converts a 4-byte big-endian byte array to a uint32 (as a long).
    *
    * @param bytes The bytes to use.

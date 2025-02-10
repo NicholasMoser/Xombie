@@ -13,6 +13,7 @@ public class XContainer implements Value {
     private static final String XUintResourceDetails = "XUintResourceDetails";
     private static final String XContainerResourceDetails = "XContainerResourceDetails";
     private static final String XDataBank = "XDataBank";
+    private static final String XCustomDescriptor = "XCustomDescriptor";
     private final String name;
     private final List<Value> values;
 
@@ -53,12 +54,15 @@ public class XContainer implements Value {
                     XomType xomType = getXomType(xomTypes, href);
                     XUInt8 pointer = XUInt8.read(child.getName(), bs);
                     values.add(pointer);
-                    if (pointer.get() != 0 && xomType != null) {
+                    if (pointer.value() != 0 && xomType != null) {
                         for (int j = 0; j < xomType.size(); j++) {
                             values.add(XUInt8.read("ContainerIndex", bs));
                         }
                     }
                 }
+                return new XContainer(typeName, values);
+            case XCustomDescriptor:
+                values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
                 return new XContainer(typeName, values);
             default:
                 break;
@@ -86,6 +90,9 @@ public class XContainer implements Value {
                 case XUInt8:
                     values.add(XUInt8.read(child.getName(), bs));
                     break;
+                case XUInt16:
+                    values.add(XUInt16.read(child.getName(), bs));
+                    break;
                 default:
                     throw new IOException("Type not yet implemented: " + valueType);
 
@@ -101,6 +108,14 @@ public class XContainer implements Value {
             }
         }
         return null;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public List<Value> values() {
+        return values;
     }
 
     @Override

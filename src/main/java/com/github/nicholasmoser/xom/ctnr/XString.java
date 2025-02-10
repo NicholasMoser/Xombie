@@ -26,6 +26,14 @@ public class XString implements Value {
         return new XString(name, string_val);
     }
 
+    public String name() {
+        return name;
+    }
+
+    public String value() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "XString{" +

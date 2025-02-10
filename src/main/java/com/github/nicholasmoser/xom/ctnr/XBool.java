@@ -21,6 +21,14 @@ public class XBool implements Value {
         return new XBool(name, bool_num == 1);
     }
 
+    public String name() {
+        return name;
+    }
+
+    public boolean value() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "XBool{" +

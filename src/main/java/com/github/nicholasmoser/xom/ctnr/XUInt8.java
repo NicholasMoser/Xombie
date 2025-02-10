@@ -17,7 +17,11 @@ public class XUInt8 implements Value {
         return new XUInt8(name, bs.readByte());
     }
 
-    public int get() {
+    public String name() {
+        return name;
+    }
+
+    public int value() {
         return value;
     }
 

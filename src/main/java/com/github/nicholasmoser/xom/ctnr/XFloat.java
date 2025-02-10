@@ -17,6 +17,14 @@ public class XFloat implements Value {
         return new XFloat(name, bs.readLEFloat());
     }
 
+    public String name() {
+        return name;
+    }
+
+    public float value() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "XFloat{" +

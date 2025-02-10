@@ -18,6 +18,14 @@ public class XUInt implements Value {
         return new XUInt(name, ByteUtils.toUint32LE(bs.readNBytes(4)));
     }
 
+    public String name() {
+        return name;
+    }
+
+    public long value() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "XUInt{" +

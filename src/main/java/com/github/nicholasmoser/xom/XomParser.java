@@ -46,8 +46,10 @@ public class XomParser {
         }
         for (XomType type : types) {
             for (int i = 0; i < type.size(); i++) {
-                if (!CTNR.equals(new String(bs.readNBytes(4)))) {
-                    throw new IOException("Failed to read CTNR field in xom header at offset " + (bs.offset() - 4));
+                byte[] peekBytes = bs.peekBytes(4);
+                if (CTNR.equals(new String(peekBytes))) {
+                    // CTNR is apparently optional after the string table?
+                    bs.skipWord();
                 }
                 // All containers have 3 or 5 null bytes following CTNR
                 bs.skipNBytes(3);
