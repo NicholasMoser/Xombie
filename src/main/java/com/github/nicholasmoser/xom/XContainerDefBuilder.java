@@ -15,6 +15,7 @@ public class XContainerDefBuilder {
     private boolean xpack;
     private String href;
     private Map<String, ValueType> valueAttrs;
+    private String parentClass;
 
     public XContainerDefBuilder setName(String name) {
         this.name = name;
@@ -71,7 +72,12 @@ public class XContainerDefBuilder {
         return this;
     }
 
+    public XContainerDefBuilder setParentClass(String parentClass) {
+        this.parentClass = parentClass;
+        return this;
+    }
+
     public XContainerDef createXContainer() {
-        return new XContainerDef(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs);
+        return new XContainerDef(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs, parentClass);
     }
 }

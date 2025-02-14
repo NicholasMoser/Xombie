@@ -16,10 +16,18 @@ public class XContainer implements Value {
     private static final String XCustomDescriptor = "XCustomDescriptor";
     private final String name;
     private final List<Value> values;
+    private final XContainer parentClass;
 
     private XContainer(String name, List<Value> values) {
         this.name = name;
         this.values = values;
+        this.parentClass = null;
+    }
+
+    private XContainer(String name, List<Value> values, XContainer parentClass) {
+        this.name = name;
+        this.values = values;
+        this.parentClass = parentClass;
     }
 
     public static XContainer read(ByteStream bs, XomType type, List<XomType> xomTypes, StringTable stringTable) throws IOException {
@@ -67,8 +75,11 @@ public class XContainer implements Value {
             default:
                 break;
         }
-        // Normal containers
-        for (XContainerDef child : container.getChildren()) {
+        // Normal containers, check children and parent class children
+        List<XContainerDef> allChildren = new ArrayList<>();
+        allChildren.addAll(container.getChildren());
+        allChildren.addAll(XomScheme.getParentClassChildren(container.getParentClass()));
+        for (XContainerDef child : allChildren) {
             String value = child.getValue();
             if (value == null) {
                 String xType = child.getXtype();

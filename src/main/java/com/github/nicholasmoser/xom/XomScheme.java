@@ -1,5 +1,6 @@
 package com.github.nicholasmoser.xom;
 
+import com.github.nicholasmoser.xom.ctnr.Value;
 import com.google.common.collect.Sets;
 import org.w3c.dom.*;
 
@@ -25,7 +26,7 @@ public class XomScheme {
             doc.normalizeDocument();
             doc.getDocumentElement().normalize();
             Element root = doc.getDocumentElement();
-            CONTAINER_DEFINITIONS = Collections.unmodifiableList(getChildren(root.getChildNodes()));
+            CONTAINER_DEFINITIONS = Collections.unmodifiableList(getChildren(root.getChildNodes(), null));
             return CONTAINER_DEFINITIONS;
         } catch (Exception e) {
             throw new IOException(e);
@@ -43,6 +44,20 @@ public class XomScheme {
         return CONTAINER_NAME_MAP;
     }
 
+    public static List<XContainerDef> getParentClassChildren(String parentClass) throws IOException {
+        if (parentClass == null) {
+            return Collections.emptyList();
+        }
+        List<XContainerDef> values = new ArrayList<>();
+        Map<String, XContainerDef> containerNameMap = getContainerNameMap();
+        XContainerDef parent = containerNameMap.get(parentClass);
+        if (parent != null) {
+            values.addAll(parent.getChildren());
+            values.addAll(getParentClassChildren(parent.getParentClass()));
+        }
+        return values;
+    }
+
     private static void getContainerNameMap(List<XContainerDef> xContainerDefs, Map<String, XContainerDef> names) {
 
         for (XContainerDef xContainerDef : xContainerDefs) {
@@ -52,18 +67,22 @@ public class XomScheme {
             if (xContainerDef.getGuid() != null) {
                 // only insert if there's a GUID
                 names.put(xContainerDef.getName(), xContainerDef);
+                // Add shortened versions of names
+                if ("OccludingCameraPropertiesContainer".equals(xContainerDef.getName())) {
+                    names.put("OccludingCameraPropertiesContai", xContainerDef);
+                }
             }
             getContainerNameMap(xContainerDef.getChildren(), names);
         };
     }
 
-    private static XContainerDef getXContainer(Node node) {
+    private static XContainerDef getXContainer(Node node, String parentClass) {
         XContainerDefBuilder xContainer = new XContainerDefBuilder();
         xContainer.setName(node.getNodeName());
         xContainer.setValue(getValueText(node));
 
-        // Handle children
-        xContainer.setChildren(getChildren(node.getChildNodes()));
+        // Handle parent
+        xContainer.setParentClass(parentClass);
 
         // Handle attributes
         TreeMap<String, ValueType> valueAttributes = new TreeMap<>();
@@ -76,6 +95,7 @@ public class XomScheme {
                 valueAttributes.put(name, value);
             }
         }
+        String xTypeValue = null; // need to see if this is a class or not
         xContainer.setValueAttrs(valueAttributes);
         Node guid = attrs.getNamedItem("guid");
         if (guid != null) {
@@ -95,7 +115,8 @@ public class XomScheme {
         }
         Node xType = attrs.getNamedItem("Xtype");
         if (xType != null) {
-            xContainer.setXtype(xType.getNodeValue());
+            xTypeValue = xType.getNodeValue();
+            xContainer.setXtype(xTypeValue);
         }
         Node xPack = attrs.getNamedItem("Xpack");
         if (xPack != null) {
@@ -105,15 +126,21 @@ public class XomScheme {
         if (href != null) {
             xContainer.setHref(href.getNodeValue());
         }
+
+        // Handle children, propagate class name if it's a class for children to use
+        boolean isParentClass = "XClass".equals(xTypeValue) && !"XContainer".equals(node.getNodeName());
+        String className = isParentClass ? node.getNodeName() : null;
+        xContainer.setChildren(getChildren(node.getChildNodes(), className));
+
         return xContainer.createXContainer();
     }
 
-    private static List<XContainerDef> getChildren(NodeList children) {
+    private static List<XContainerDef> getChildren(NodeList children, String parentClass) {
         List<XContainerDef> xContainerDefs = new ArrayList<>(children.getLength());
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                xContainerDefs.add(getXContainer(child));
+                xContainerDefs.add(getXContainer(child, parentClass));
             }
         }
         return xContainerDefs;
