@@ -1116,7 +1116,8 @@
       <MinPosition>XFloat</MinPosition>
       <MinTimeBetweenCuts>XUInt</MinTimeBetweenCuts>
       <ViewPoint Xtype="XCollection" x="XFloat" y="XFloat" z="XFloat" />
-      <CutWhenStartOffScreen>XBool</CutWhenStartOffScreen>
+      <!-- Removed in GameCube schema -->
+      <!--<CutWhenStartOffScreen>XBool</CutWhenStartOffScreen>-->
     </TrackCameraContainer>
     <OccludingCameraPropertiesContainer guid="{51D74BFA-CA52-41A3-ABCB-A0D0F330B512}" Xver="0" Xtype="XClass" id="XRef">
       <ChaseCameraPropertiesContainer guid="{A6FE8A24-4082-4782-8C5A-798A695CC732}" Xver="0" id="XRef">
