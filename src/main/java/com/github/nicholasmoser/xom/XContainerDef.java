@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class representing the definition of an XContainer, but containing no actual XContainer data.
+ * A class representing the definition of an XContainer, but containing no actual XContainer data. This is read from the
+ * schema definition file XOMSCHM.xml and is used to know how to read a specific XContainer.
  */
 public class XContainerDef {
     private final String name;

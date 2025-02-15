@@ -3,7 +3,7 @@ package com.github.nicholasmoser.xom.ctnr;
 import java.util.List;
 
 /**
- * Similar to an XContainer, but just holds multiple values such as x, y, and z.
+ * An ordered collection of primitive values, such as coordinates like x, y, and z.
  */
 public class Tuple implements Value {
     private final String name;

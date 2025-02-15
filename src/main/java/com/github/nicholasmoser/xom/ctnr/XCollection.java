@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * An ordered collection of values. Can be a collection of primitive values, tuples, or XContainers.
+ */
 public class XCollection implements Value {
     private final String name;
     private final List<Value> values;

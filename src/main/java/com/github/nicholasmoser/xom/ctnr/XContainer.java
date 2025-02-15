@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A container of values. The values can be other containers, tuples, or primitives.
+ */
 public class XContainer implements Value {
     private final String name;
     private final List<Value> values;

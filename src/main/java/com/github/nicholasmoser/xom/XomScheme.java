@@ -1,6 +1,5 @@
 package com.github.nicholasmoser.xom;
 
-import com.github.nicholasmoser.xom.ctnr.Value;
 import com.google.common.collect.Sets;
 import org.w3c.dom.*;
 
@@ -15,6 +14,10 @@ public class XomScheme {
     private static List<XContainerDef> CONTAINER_DEFINITIONS;
     private static Map<String, XContainerDef> CONTAINER_NAME_MAP;
 
+    /**
+     * @return The full list of all XContainer definitions.
+     * @throws IOException If any I/O exception occurs
+     */
     public static List<XContainerDef> getContainerDefinitions() throws IOException {
         if (CONTAINER_DEFINITIONS != null) {
             return CONTAINER_DEFINITIONS;
@@ -33,6 +36,10 @@ public class XomScheme {
         }
     }
 
+    /**
+     * @return The mapping of XContainer names to XContainer definitions.
+     * @throws IOException If any I/O exception occurs
+     */
     public static Map<String, XContainerDef> getContainerNameMap() throws IOException {
         if (CONTAINER_NAME_MAP != null) {
             return CONTAINER_NAME_MAP;
@@ -44,6 +51,13 @@ public class XomScheme {
         return CONTAINER_NAME_MAP;
     }
 
+    /**
+     * Gets the children of a class name, used to lookup XContainer definition children of a parent class.
+     *
+     * @param parentClass The name of the parent class.
+     * @return The XContainer definition children of the class.
+     * @throws IOException If any I/O exception occurs
+     */
     public static List<XContainerDef> getParentClassChildren(String parentClass) throws IOException {
         if (parentClass == null) {
             return Collections.emptyList();

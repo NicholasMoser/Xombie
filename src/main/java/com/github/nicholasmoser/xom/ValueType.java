@@ -1,5 +1,8 @@
 package com.github.nicholasmoser.xom;
 
+/**
+ * A primitive value type for xom files.
+ */
 public enum ValueType {
     XInt,
     XUInt,
