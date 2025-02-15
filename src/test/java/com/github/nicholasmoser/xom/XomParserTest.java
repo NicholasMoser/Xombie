@@ -92,7 +92,73 @@ public class XomParserTest {
         // First container
         XContainer first = containers.get(0);
         assertThat(first.name()).isEqualTo("TrackCameraContainer");
-        assertThat(first.values().size()).isEqualTo(18);
+        assertThat(first.values().size()).isEqualTo(8);
+        XFloat lookSpeed = (XFloat) first.values().get(1);
+        assertThat(lookSpeed.name()).isEqualTo("LookSpeed");
+        assertThat(lookSpeed.value()).isEqualTo(0.1f);
+        XCollection viewPoints = (XCollection) first.values().get(7);
+        assertThat(viewPoints.name()).isEqualTo("ViewPoint");
+        assertThat(viewPoints.values().size()).isEqualTo(11);
+        Tuple firstTuple = (Tuple) viewPoints.values().get(0);
+        assertThat(firstTuple.getName()).isEqualTo("ViewPoint");
+        assertThat(firstTuple.getValues().size()).isEqualTo(3);
+        List<Value> xyz = firstTuple.getValues();
+        XFloat z = (XFloat) xyz.get(2);
+        assertThat(z.name()).isEqualTo("z");
+        assertThat(z.value()).isEqualTo(300.0f);
+
+        // XUInt resource
+        XContainer xuint = containers.get(22);
+        assertThat(xuint.name()).isEqualTo("XUintResourceDetails");
+        XUInt value = (XUInt) xuint.values().get(0);
+        assertThat(value.name()).isEqualTo("Value");
+        assertThat(value.value()).isEqualTo(1000);
+        XString name = (XString) xuint.values().get(1);
+        assertThat(name.name()).isEqualTo("Name");
+        assertThat(name.value()).isEqualTo("Camera.Track.MinEventTime");
+        XUInt flags = (XUInt) xuint.values().get(2);
+        assertThat(flags.name()).isEqualTo("Flags");
+        assertThat(flags.value()).isEqualTo(0);
+
+        // XVector resource
+        XContainer xvector = containers.get(80);
+        assertThat(xvector.name()).isEqualTo("XVectorResourceDetails");
+        Tuple xvectorTuple = (Tuple) xvector.values().get(0);
+        assertThat(xvectorTuple.getName()).isEqualTo("Value");
+        XFloat xvectorY = (XFloat) xvectorTuple.getValues().get(1);
+        assertThat(xvectorY.name()).isEqualTo("y");
+        assertThat(xvectorY.value()).isEqualTo(0f);
+        name = (XString) xvector.values().get(1);
+        assertThat(name.name()).isEqualTo("Name");
+        assertThat(name.value()).isEqualTo("Camera.Track.EventPosition");
+        flags = (XUInt) xvector.values().get(2);
+        assertThat(flags.name()).isEqualTo("Flags");
+        assertThat(flags.value()).isEqualTo(0);
+
+        // Verify they are all XContainers
+        for (XContainer child : containers) {
+            assertThat(child).isOfAnyClassIn(XContainer.class);
+        }
+
+        // Check the name of a few of them
+        assertContainerName(containers.get(4), "OccludingCameraPropertiesContai");
+        assertContainerName(containers.get(7), "ChaseCameraPropertiesContainer");
+        assertContainerName(containers.get(14), "FlyCameraPropertiesContainer");
+        assertContainerName(containers.get(19), "XUintResourceDetails");
+        assertContainerName(containers.get(29), "XStringResourceDetails");
+        assertContainerName(containers.get(33), "XStringResourceDetails");
+        assertContainerName(containers.get(34), "XFloatResourceDetails");
+        assertContainerName(containers.get(79), "XFloatResourceDetails");
+        assertContainerName(containers.get(80), "XVectorResourceDetails");
+        assertContainerName(containers.get(83), "XVectorResourceDetails");
+        assertContainerName(containers.get(84), "XContainerResourceDetails");
+        assertContainerName(containers.get(98), "XContainerResourceDetails");
+        assertContainerName(containers.get(99), "XDataBank");
+    }
+
+    private void assertContainerName(Value value, String name) {
+        XContainer xContainer = (XContainer) value;
+        assertThat(xContainer.name()).isEqualTo(name);
     }
 
     @Test
