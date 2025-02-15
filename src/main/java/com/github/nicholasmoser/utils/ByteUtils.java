@@ -181,6 +181,16 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a 4-byte little-endian byte array to a int32 (as an int).
+   *
+   * @param bytes The bytes to use.
+   * @return The output int32 (as an int).
+   */
+  public static int toInt32LE(byte[] bytes) {
+    return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+  }
+
+  /**
    * Converts a 4-byte big-endian byte array to a float.
    *
    * @param bytes The bytes to use.

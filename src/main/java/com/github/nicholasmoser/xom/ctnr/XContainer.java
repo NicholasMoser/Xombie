@@ -2,6 +2,7 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,11 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class XContainer implements Value {
-    private static final String XIntResourceDetails = "XIntResourceDetails";
-    private static final String XUintResourceDetails = "XUintResourceDetails";
-    private static final String XContainerResourceDetails = "XContainerResourceDetails";
-    private static final String XDataBank = "XDataBank";
-    private static final String XCustomDescriptor = "XCustomDescriptor";
     private final String name;
     private final List<Value> values;
     private final XContainer parentClass;
@@ -41,39 +37,65 @@ public class XContainer implements Value {
 
         // Containers with special handling
         // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
-        switch(container.getName()) {
-            case XIntResourceDetails:
-            case XUintResourceDetails:
-                values.add(XUInt.read("Value", bs));
-                values.add(XString.read("Name", bs, stringTable));
-                values.add(XUInt.read("Flag", bs));
-                return new XContainer(typeName, values);
-            case XContainerResourceDetails:
-                values.add(XUInt8.read("ContainerIndex", bs));
-                values.add(XString.read("Name", bs, stringTable));
-                values.add(XUInt.read("Flag", bs));
-                return new XContainer(typeName, values);
-            case XDataBank:
-                values.add(XUInt8.read("Section", bs));
-                List<XContainerDef> children = container.getChildren();
-                for (int i = 1; i < children.size(); i++) {
-                    XContainerDef child = children.get(i);
-                    String href = child.getHref();
-                    XomType xomType = getXomType(xomTypes, href);
-                    XUInt8 pointer = XUInt8.read(child.getName(), bs);
-                    values.add(pointer);
-                    if (pointer.value() != 0 && xomType != null) {
-                        for (int j = 0; j < xomType.size(); j++) {
-                            values.add(XUInt8.read("ContainerIndex", bs));
+        XType xType = XType.get(container.getName());
+        if (xType != null) {
+            switch(xType) {
+                case XIntResourceDetails:
+                    values.add(XInt.read("Value", bs));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flags", bs));
+                    return new XContainer(typeName, values);
+                case XUintResourceDetails:
+                    values.add(XUInt.read("Value", bs));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flags", bs));
+                    return new XContainer(typeName, values);
+                case XStringResourceDetails:
+                    values.add(XString.read("Value", bs, stringTable));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flags", bs));
+                    return new XContainer(typeName, values);
+                case XFloatResourceDetails:
+                    values.add(XFloat.read("Value", bs));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flags", bs));
+                    return new XContainer(typeName, values);
+                case XContainerResourceDetails:
+                    values.add(XUInt8.read("ContainerIndex", bs));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flag", bs));
+                    return new XContainer(typeName, values);
+                case XVectorResourceDetails:
+                    List<Value> tupleValues = new ArrayList<>();
+                    tupleValues.add(XFloat.read("x", bs));
+                    tupleValues.add(XFloat.read("y", bs));
+                    tupleValues.add(XFloat.read("z", bs));
+                    values.add(new Tuple("Value", tupleValues));
+                    values.add(XString.read("Name", bs, stringTable));
+                    values.add(XUInt.read("Flags", bs));
+                    return new XContainer(typeName, values);
+                case XDataBank:
+                    values.add(XUInt8.read("Section", bs));
+                    List<XContainerDef> children = container.getChildren();
+                    for (int i = 1; i < children.size(); i++) {
+                        XContainerDef child = children.get(i);
+                        String href = child.getHref();
+                        XomType xomType = getXomType(xomTypes, href);
+                        XUInt8 pointer = XUInt8.read(child.getName(), bs);
+                        values.add(pointer);
+                        if (pointer.value() != 0 && xomType != null) {
+                            for (int j = 0; j < xomType.size(); j++) {
+                                values.add(XUInt8.read("ContainerIndex", bs));
+                            }
                         }
                     }
-                }
-                return new XContainer(typeName, values);
-            case XCustomDescriptor:
-                values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
-                return new XContainer(typeName, values);
-            default:
-                break;
+                    return new XContainer(typeName, values);
+                case XCustomDescriptor:
+                    values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
+                    return new XContainer(typeName, values);
+                default:
+                    throw new IOException("TODO: Implement " + xType);
+            }
         }
         // Normal containers, check children and parent class children
         List<XContainerDef> allChildren = new ArrayList<>();
@@ -82,13 +104,23 @@ public class XContainer implements Value {
         for (XContainerDef child : allChildren) {
             String value = child.getValue();
             if (value == null) {
-                String xType = child.getXtype();
-                if (!"XCollection".equals(xType)) {
-                    throw new IOException("Unknown value and xType, xType is " + xType);
-                }
-                int size = bs.readByte();
-                for (int i = 0; i < size; i++) {
-                    values.add(XCollection.read(bs, child, stringTable));
+                String xTypeText = child.getXtype();
+                if ("XCollection".equals(xTypeText)) {
+                    // XCollection, basically an array of values
+                    int size = bs.readByte();
+                    for (int i = 0; i < size; i++) {
+                        values.add(XCollection.read(bs, child, stringTable));
+                    }
+                } else if (!child.getValueAttrs().isEmpty()) {
+                    // Tuple with value attributes, such as x, y, and z
+                    List<Value> tupleValues = new ArrayList<>();
+                    for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
+                        tupleValues.add(readValue(entry.getValue(), entry.getKey(), stringTable, bs));
+                    }
+                    values.add(new Tuple(child.getName(), tupleValues));
+                } else {
+                    // Anything else
+                    System.out.println();
                 }
             } else {
                 ValueType valueType = ValueType.valueOf(value);
@@ -103,6 +135,7 @@ public class XContainer implements Value {
             case XFloat -> XFloat.read(name, bs);
             case XBool -> XBool.read(name, bs);
             case XString -> XString.read(name, bs, stringTable);
+            case XInt -> XInt.read(name, bs);
             case XUInt -> XUInt.read(name, bs);
             case XUInt8 -> XUInt8.read(name, bs);
             case XUInt16 -> XUInt16.read(name, bs);
