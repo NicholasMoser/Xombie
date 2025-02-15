@@ -19,10 +19,25 @@ public class XCollection implements Value {
         this.values = values;
     }
 
-    public static Value read(ByteStream bs, XContainerDef child, StringTable stringTable) throws IOException {
+    public static Value read(ByteStream bs, XContainerDef child, int size, StringTable stringTable) throws IOException {
         List<Value> values = new ArrayList<>();
-        for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
-            values.add(XContainer.readValue(entry.getValue(), entry.getKey(), stringTable, bs));
+        // Populate collection
+        for (int i = 0; i < size; i++) {
+            if (!child.getValueAttrs().isEmpty()) {
+                // Collection of tuples (e.g. x, y, z)
+                List<Value> tupleValues = new ArrayList<>(3);
+                for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
+                    tupleValues.add(XContainer.readValue(entry.getValue(), entry.getKey(), stringTable, bs));
+                }
+                values.add(new Tuple(child.getName(), tupleValues));
+            } else if (child.getValue() != null ) {
+                // Collection of value (e.g. XInt)
+                throw new IOException("TODO");
+
+            } else if (child.getHref().equals("XContainer")) {
+                // Collection of XContainers
+                throw new IOException("TODO");
+            }
         }
         return new XCollection(child.getName(), values);
     }

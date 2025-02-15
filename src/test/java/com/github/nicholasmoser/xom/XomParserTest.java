@@ -38,6 +38,64 @@ public class XomParserTest {
     }
 
     @Test
+    public void testCamTwk() throws Exception {
+        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
+        Xom xom = XomParser.parse(f);
+
+        // Check header
+        XomHeader header = xom.header();
+        assertThat(header.flag()).isEqualTo(2);
+        assertThat(header.numberOfTypes()).isEqualTo(13);
+        assertThat(header.maxCount()).isEqualTo(100);
+        assertThat(header.rootCount()).isEqualTo(100);
+
+        // Check types
+        List<XomType> types = xom.types();
+        assertThat(types.size()).isEqualTo(13);
+        assertThat(types.get(0).subType()).isEqualTo(0);
+        assertThat(types.get(0).size()).isEqualTo(0);
+        assertThat(types.get(0).name()).isEqualTo("XContainer");
+        assertThat(types.get(0).guid()).isEqualTo("5E1CD446-48A3-44FE-A55A-E247B8F5E713");
+        assertThat(types.get(1).subType()).isEqualTo(0);
+        assertThat(types.get(1).size()).isEqualTo(4);
+        assertThat(types.get(1).name()).isEqualTo("TrackCameraContainer");
+        assertThat(types.get(1).guid()).isEqualTo("E746407C-AB92-4641-A171-880E86B8602C");
+        assertThat(types.get(2).subType()).isEqualTo(0);
+        assertThat(types.get(2).size()).isEqualTo(3);
+        assertThat(types.get(2).name()).isEqualTo("OccludingCameraPropertiesContai");
+        assertThat(types.get(2).guid()).isEqualTo("51D74BFA-CA52-41A3-ABCB-A0D0F330B512");
+        assertThat(types.get(3).subType()).isEqualTo(0);
+        assertThat(types.get(3).size()).isEqualTo(5);
+        assertThat(types.get(3).name()).isEqualTo("ChaseCameraPropertiesContainer");
+        assertThat(types.get(3).guid()).isEqualTo("A6FE8A24-4082-4782-8C5A-798A695CC732");
+        assertThat(types.get(4).subType()).isEqualTo(0);
+        assertThat(types.get(4).size()).isEqualTo(3);
+        assertThat(types.get(4).name()).isEqualTo("FlyCameraPropertiesContainer");
+        assertThat(types.get(4).guid()).isEqualTo("90B14B7E-56D2-4E88-93E6-CD92007A486D");
+        assertThat(types.get(12).subType()).isEqualTo(0);
+        assertThat(types.get(12).size()).isEqualTo(1);
+        assertThat(types.get(12).name()).isEqualTo("XDataBank");
+        assertThat(types.get(12).guid()).isEqualTo("93E661AC-D941-442A-A18E-E99B795879DC");
+
+        // Check string table
+        StringTable stringTable = xom.stringTable();
+        assertThat(stringTable.lenStrs()).isEqualTo(1995);
+        assertThat(stringTable.sizeStrs()).isEqualTo(86);
+        assertThat(stringTable.offsetToStr().size()).isEqualTo(86);
+        assertThat(stringTable.getString(0)).isEqualTo("");
+        assertThat(stringTable.getString(1)).isEqualTo("Camera.Shake.Length");
+        assertThat(stringTable.getString(85)).isEqualTo("FallCamera");
+
+        // Check containers
+        List<XContainer> containers = xom.containers();
+        assertThat(containers.size()).isEqualTo(100);
+        // First container
+        XContainer first = containers.get(0);
+        assertThat(first.name()).isEqualTo("TrackCameraContainer");
+        assertThat(first.values().size()).isEqualTo(18);
+    }
+
+    @Test
     public void testAITwk() throws Exception {
         Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\AITwk.xom");
         Xom xom = XomParser.parse(f);
@@ -52,31 +110,25 @@ public class XomParserTest {
         // Check types
         List<XomType> types = xom.types();
         assertThat(types.size()).isEqualTo(6);
-        XomType first = types.get(0);
-        assertThat(first.subType()).isEqualTo(0);
-        assertThat(first.size()).isEqualTo(0);
-        assertThat(first.name()).isEqualTo("XContainer");
-        assertThat(first.guid()).isEqualTo("5E1CD446-48A3-44FE-A55A-E247B8F5E713");
-        XomType second = types.get(1);
-        assertThat(second.subType()).isEqualTo(0);
-        assertThat(second.name()).isEqualTo("AIParametersContainer");
-        assertThat(second.guid()).isEqualTo("6A0DEE10-2E94-4844-B2D4-6C39CA979C90");
-        XomType third = types.get(2);
-        assertThat(third.subType()).isEqualTo(0);
-        assertThat(third.name()).isEqualTo("XResourceDetails");
-        assertThat(third.guid()).isEqualTo("E77556F2-A495-491A-8563-006CE2577244");
-        XomType fourth = types.get(3);
-        assertThat(fourth.subType()).isEqualTo(0);
-        assertThat(fourth.name()).isEqualTo("XUintResourceDetails");
-        assertThat(fourth.guid()).isEqualTo("93E5117C-8ADA-4AFB-B17A-668D0BDD15E6");
-        XomType fifth = types.get(4);
-        assertThat(fifth.subType()).isEqualTo(0);
-        assertThat(fifth.name()).isEqualTo("XContainerResourceDetails");
-        assertThat(fifth.guid()).isEqualTo("E0B6BF20-F80B-4329-B6EB-1998ED8AEC1F");
-        XomType sixth = types.get(5);
-        assertThat(sixth.subType()).isEqualTo(0);
-        assertThat(sixth.name()).isEqualTo("XDataBank");
-        assertThat(sixth.guid()).isEqualTo("93E661AC-D941-442A-A18E-E99B795879DC");
+        assertThat(types.get(0).subType()).isEqualTo(0);
+        assertThat(types.get(0).size()).isEqualTo(0);
+        assertThat(types.get(0).name()).isEqualTo("XContainer");
+        assertThat(types.get(0).guid()).isEqualTo("5E1CD446-48A3-44FE-A55A-E247B8F5E713");
+        assertThat(types.get(1).subType()).isEqualTo(0);
+        assertThat(types.get(1).name()).isEqualTo("AIParametersContainer");
+        assertThat(types.get(1).guid()).isEqualTo("6A0DEE10-2E94-4844-B2D4-6C39CA979C90");
+        assertThat(types.get(2).subType()).isEqualTo(0);
+        assertThat(types.get(2).name()).isEqualTo("XResourceDetails");
+        assertThat(types.get(2).guid()).isEqualTo("E77556F2-A495-491A-8563-006CE2577244");
+        assertThat(types.get(3).subType()).isEqualTo(0);
+        assertThat(types.get(3).name()).isEqualTo("XUintResourceDetails");
+        assertThat(types.get(3).guid()).isEqualTo("93E5117C-8ADA-4AFB-B17A-668D0BDD15E6");
+        assertThat(types.get(4).subType()).isEqualTo(0);
+        assertThat(types.get(4).name()).isEqualTo("XContainerResourceDetails");
+        assertThat(types.get(4).guid()).isEqualTo("E0B6BF20-F80B-4329-B6EB-1998ED8AEC1F");
+        assertThat(types.get(5).subType()).isEqualTo(0);
+        assertThat(types.get(5).name()).isEqualTo("XDataBank");
+        assertThat(types.get(5).guid()).isEqualTo("93E661AC-D941-442A-A18E-E99B795879DC");
 
         // Check string table
         StringTable stringTable = xom.stringTable();

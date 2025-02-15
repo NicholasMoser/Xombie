@@ -2,7 +2,6 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,9 +107,7 @@ public class XContainer implements Value {
                 if ("XCollection".equals(xTypeText)) {
                     // XCollection, basically an array of values
                     int size = bs.readByte();
-                    for (int i = 0; i < size; i++) {
-                        values.add(XCollection.read(bs, child, stringTable));
-                    }
+                    values.add(XCollection.read(bs, child, size, stringTable));
                 } else if (!child.getValueAttrs().isEmpty()) {
                     // Tuple with value attributes, such as x, y, and z
                     List<Value> tupleValues = new ArrayList<>();
