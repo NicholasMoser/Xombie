@@ -9,22 +9,22 @@ import com.github.nicholasmoser.xom.ctnr.XUInt8;
 
 import java.io.IOException;
 
-public class XGraphSet implements Value {
+public class Graph implements Value {
     private final XGUID type; // GUID
     private final XUInt8 href;
     private final XString name;
 
-    private XGraphSet(String containerName, XGUID type, XUInt8 href, XString name) {
+    private Graph(String containerName, XGUID type, XUInt8 href, XString name) {
         this.type = type;
         this.href = href;
         this.name = name;
     }
 
-    public static XGraphSet read(String name, ByteStream bs, StringTable stringTable) throws IOException {
+    public static Graph read(String name, ByteStream bs, StringTable stringTable) throws IOException {
         XGUID xGUID = XGUID.read("Type", bs);
         XUInt8 href = XUInt8.read("href", bs);
         XString innerName = XString.read("Name", bs, stringTable);
-        return new XGraphSet(name, xGUID, href, innerName);
+        return new Graph(name, xGUID, href, innerName);
     }
 
     @Override

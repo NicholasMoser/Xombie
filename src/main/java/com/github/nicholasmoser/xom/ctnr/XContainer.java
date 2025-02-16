@@ -2,7 +2,7 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
-import com.github.nicholasmoser.xom.complex.XGraphSet;
+import com.github.nicholasmoser.xom.complex.Graph;
 import com.github.nicholasmoser.xom.complex.XTexFont;
 
 import java.io.IOException;
@@ -113,7 +113,7 @@ public class XContainer implements Value {
                 case XGraphSet:
                     int size = bs.readVarint();
                     for (int i = 0; i < size; i++) {
-                        values.add(XGraphSet.read("Graph", bs, stringTable));
+                        values.add(Graph.read("Graph", bs, stringTable));
                     }
                     return new XContainer("XGraphSet", values);
                 case XTexFont:
