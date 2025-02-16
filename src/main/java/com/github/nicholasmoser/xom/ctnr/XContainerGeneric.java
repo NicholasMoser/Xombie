@@ -2,10 +2,7 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
-import com.github.nicholasmoser.xom.complex.Graph;
-import com.github.nicholasmoser.xom.complex.XAlphaTest;
-import com.github.nicholasmoser.xom.complex.XTexFont;
-import com.github.nicholasmoser.xom.complex.XZBufferWriteEnable;
+import com.github.nicholasmoser.xom.complex.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -124,6 +121,12 @@ public class XContainerGeneric implements XContainer {
                     return XAlphaTest.read(bs);
                 case XZBufferWriteEnable:
                     return XZBufferWriteEnable.read(bs);
+                case XDepthTest:
+                    return XDepthTest.read(bs);
+                case XCullFace:
+                    return XCullFace.read(bs);
+                case XLightingEnable:
+                    return XLightingEnable.read(bs);
                 default:
                     throw new IOException("TODO: Implement " + xType);
             }

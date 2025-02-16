@@ -6,15 +6,17 @@ import com.github.nicholasmoser.xom.ctnr.*;
 import java.io.IOException;
 import java.util.Map;
 
-public class XAlphaTest implements XContainer {
+public class XDepthTest implements XContainer {
     private final XBool enable;
     private final XEnum compareFunction;
-    private final XFloat refValue;
+    private final XFloat nearZ;
+    private final XFloat farZ;
 
-    private XAlphaTest(XBool enable, XEnum compareFunction, XFloat refValue) {
+    private XDepthTest(XBool enable, XEnum compareFunction, XFloat nearZ, XFloat farZ) {
         this.enable = enable;
         this.compareFunction = compareFunction;
-        this.refValue = refValue;
+        this.nearZ = nearZ;
+        this.farZ = farZ;
     }
 
     private static final Map<Long, String> ENUMS = Map.of(0L, "kCompareFunctionNever",
@@ -26,19 +28,21 @@ public class XAlphaTest implements XContainer {
             6L, "kCompareFunctionGreaterEqual",
             7L, "kCompareFunctionAlways");
 
-    public static XAlphaTest read(ByteStream bs) throws IOException {
-        XBool enable = XBool.read("Enable", bs);
+    public static XDepthTest read(ByteStream bs) throws IOException {
         XEnum compareFunction = XEnum.read("CompareFunction", bs, ENUMS);
-        XFloat refValue = XFloat.read("RefValue", bs);
-        return new XAlphaTest(enable, compareFunction, refValue);
+        XBool enable = XBool.read("Enable", bs);
+        XFloat nearZ = XFloat.read("NearZ", bs);
+        XFloat farZ = XFloat.read("FarZ", bs);
+        return new XDepthTest(enable, compareFunction, nearZ, farZ);
     }
 
     @Override
     public String toString() {
-        return "XAlphaTest{" +
+        return "XDepthTest{" +
                 "enable=" + enable +
                 ", compareFunction=" + compareFunction +
-                ", refValue=" + refValue +
+                ", nearZ=" + nearZ +
+                ", farZ=" + farZ +
                 '}';
     }
 }
