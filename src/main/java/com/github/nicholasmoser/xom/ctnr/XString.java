@@ -15,7 +15,7 @@ public class XString implements Value {
     }
 
     public static XString read(String name, ByteStream bs, StringTable stringTable) throws IOException {
-        int str_index = bs.read();
+        int str_index = bs.readVarint();
         if (str_index == -1) {
             throw new IOException("Tried to read XString but at end of stream");
         }

@@ -99,7 +99,7 @@ public class XomScheme {
         xContainer.setParentClass(parentClass);
 
         // Handle attributes
-        TreeMap<String, ValueType> valueAttributes = new TreeMap<>();
+        LinkedHashMap<String, ValueType> valueAttributes = new LinkedHashMap<>();
         NamedNodeMap attrs = node.getAttributes();
         for (int i = 0; i < attrs.getLength(); i++) {
             Node attr = attrs.item(i);

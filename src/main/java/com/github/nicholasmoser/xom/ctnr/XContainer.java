@@ -2,6 +2,7 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
+import com.github.nicholasmoser.xom.complex.XGraphSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +37,12 @@ public class XContainer implements Value {
             throw new IOException("Failed to find definition for name " + typeName);
         }
         List<Value> values = new ArrayList<>();
+
+        // All containers have 3 or 5 bytes following CTNR
+        // TODO: Sometimes null but sometimes isn't. What are these bytes?
+        if (!container.isNoCntr()) {
+            bs.skipNBytes(3);
+        }
 
         // Containers with special handling
         // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
@@ -95,6 +102,19 @@ public class XContainer implements Value {
                 case XCustomDescriptor:
                     values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
                     return new XContainer(typeName, values);
+                case XBitmapDescriptor:
+                    values.add(XString.read("ResourceId", bs, stringTable));
+                    values.add(XUInt8.read("SectionId", bs));
+                    values.add(XUInt8.read("SpriteScene", bs));
+                    values.add(XUInt16.read("ImageWidth", bs));
+                    values.add(XUInt16.read("ImageHeight", bs));
+                    return new XContainer("XBitmapDescriptor", values);
+                case XGraphSet:
+                    int size = bs.readVarint();
+                    for (int i = 0; i < size; i++) {
+                        values.add(XGraphSet.read("Graph", bs, stringTable));
+                    }
+                    return new XContainer("XGraphSet", values);
                 default:
                     throw new IOException("TODO: Implement " + xType);
             }

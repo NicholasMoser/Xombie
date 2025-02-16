@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class XomParser {
     private static final int TYPE_HEADER_SIZE = 0x40;
@@ -51,8 +51,6 @@ public class XomParser {
                     // CTNR is apparently optional after the string table?
                     bs.skipWord();
                 }
-                // All containers have 3 or 5 null bytes following CTNR
-                bs.skipNBytes(3);
                 XContainer container = XContainer.read(bs, type, types, stringTable);
                 containers.add(container);
             }
@@ -70,7 +68,7 @@ public class XomParser {
         for (int i = 0; i < sizeStrs; i++) {
             offsets.add(bs.readLEWord());
         }
-        Map<Integer, String> offsetToStr = new TreeMap<>();
+        Map<Integer, String> offsetToStr = new LinkedHashMap<>();
         offsetToStr.put(0, "");
         int start = bs.offset();
         for (int i = 0; i < sizeStrs; i++) {

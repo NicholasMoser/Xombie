@@ -15,7 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class XomParserTest {
     @Test
     public void testSpecificXomFile() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
+        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
         XomParser.parse(f);
     }
 
@@ -156,11 +156,6 @@ public class XomParserTest {
         assertContainerName(containers.get(99), "XDataBank");
     }
 
-    private void assertContainerName(Value value, String name) {
-        XContainer xContainer = (XContainer) value;
-        assertThat(xContainer.name()).isEqualTo(name);
-    }
-
     @Test
     public void testAITwk() throws Exception {
         Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\AITwk.xom");
@@ -280,5 +275,10 @@ public class XomParserTest {
         containerIndex = (XUInt8) lastValues.get(8);
         assertThat(containerIndex.name()).isEqualTo("ContainerIndex");
         assertThat(containerIndex.value()).isEqualTo(26);
+    }
+
+    private void assertContainerName(Value value, String name) {
+        XContainer xContainer = (XContainer) value;
+        assertThat(xContainer.name()).isEqualTo(name);
     }
 }

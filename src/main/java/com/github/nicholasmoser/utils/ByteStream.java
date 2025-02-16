@@ -254,4 +254,33 @@ public class ByteStream extends ByteArrayInputStream {
   public boolean bytesAreLeft(int count) {
     return pos + count <= buf.length;
   }
+
+  /**
+   * Decodes a variable-length integer, encoded using base-128 encoding. 7 bits are stored per byte, the most
+   * significant bit is a continuation flag.
+   *
+   * @return The variable-length int.
+   * @throws IOException If any I/O exception occurs
+   */
+  public int readVarint() throws IOException {
+    int val = 0;
+    int shift = 0;
+    int n = 0;
+
+    while (n < 4) { // Limit to 4 bytes (max for a 32-bit integer)
+      int b = read();
+      if (b == -1) {
+        throw new IOException("Unexpected end of stream");
+      }
+
+      val |= (b & 0x7F) << shift;
+      shift += 7;
+
+      if ((b & 0x80) == 0) { // MSB is 0, so this is the last byte
+        return val;
+      }
+      n++;
+    }
+    throw new IOException("Varint too long (more than 4 bytes)");
+  }
 }

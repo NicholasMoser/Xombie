@@ -17,4 +17,20 @@ public class XUInt16 implements Value {
     public static XUInt16 read(String name, ByteStream bs) throws IOException {
         return new XUInt16(name, ByteUtils.toUint16LE(bs.readNBytes(2)));
     }
+
+    public String name() {
+        return name;
+    }
+
+    public int value() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "XUInt16{" +
+                "name='" + name + '\'' +
+                ", value=" + value +
+                '}';
+    }
 }
