@@ -3,6 +3,7 @@ package com.github.nicholasmoser.xom.ctnr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
 import com.github.nicholasmoser.xom.complex.XGraphSet;
+import com.github.nicholasmoser.xom.complex.XTexFont;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,6 +116,9 @@ public class XContainer implements Value {
                         values.add(XGraphSet.read("Graph", bs, stringTable));
                     }
                     return new XContainer("XGraphSet", values);
+                case XTexFont:
+                    values.add(XTexFont.read(bs, stringTable));
+                    return new XContainer("XTexFont", values);
                 default:
                     throw new IOException("TODO: Implement " + xType);
             }
