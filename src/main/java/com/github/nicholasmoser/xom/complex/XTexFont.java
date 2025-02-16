@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XTexFont implements Value {
+public class XTexFont implements XContainer {
     private List<Tuple> charCoords; // List of two coordinate tuples, e.g. (0.0, 0.0)
     private List<Tuple> charSizes; // List of two size tuples, e.g. (1.0, 1.0)
     private List<XUInt8> textureStages;

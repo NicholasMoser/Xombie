@@ -30,7 +30,7 @@ public class XCollection implements Value {
                 // Collection of tuples (e.g. x, y, z)
                 List<Value> tupleValues = new ArrayList<>(3);
                 for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
-                    tupleValues.add(XContainer.readValue(entry.getValue(), entry.getKey(), stringTable, bs));
+                    tupleValues.add(XContainerGeneric.readValue(entry.getValue(), entry.getKey(), stringTable, bs));
                 }
                 values.add(new Tuple(child.getName(), tupleValues));
             } else if (child.getValue() != null ) {
