@@ -3,7 +3,9 @@ package com.github.nicholasmoser.xom.ctnr;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
 import com.github.nicholasmoser.xom.complex.Graph;
+import com.github.nicholasmoser.xom.complex.XAlphaTest;
 import com.github.nicholasmoser.xom.complex.XTexFont;
+import com.github.nicholasmoser.xom.complex.XZBufferWriteEnable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,6 +120,10 @@ public class XContainerGeneric implements XContainer {
                     return new XContainerGeneric("XGraphSet", values);
                 case XTexFont:
                     return XTexFont.read(bs, stringTable);
+                case XAlphaTest:
+                    return XAlphaTest.read(bs);
+                case XZBufferWriteEnable:
+                    return XZBufferWriteEnable.read(bs);
                 default:
                     throw new IOException("TODO: Implement " + xType);
             }
