@@ -14,11 +14,11 @@ public class Tuple implements Value {
         this.values = values;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public List<Value> getValues() {
+    public List<Value> values() {
         return values;
     }
 

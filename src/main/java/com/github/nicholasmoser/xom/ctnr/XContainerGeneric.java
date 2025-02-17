@@ -2,7 +2,6 @@ package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.*;
-import com.github.nicholasmoser.xom.complex.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +45,7 @@ public class XContainerGeneric implements XContainer {
 
         // Containers with special handling
         // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
-        XType xType = XType.get(container.getName());
+        XType xType = XType.get(container.name());
         if (xType != null) {
             switch(xType) {
                 case XIntResourceDetails:
@@ -114,41 +113,41 @@ public class XContainerGeneric implements XContainer {
         }
         // Normal containers, check children and parent class children
         List<XContainerDef> allChildren = new ArrayList<>();
-        for (XContainerDef def : container.getChildren()) {
-            if (!"XRef".equals(def.getId())) {
+        for (XContainerDef def : container.children()) {
+            if (!"XRef".equals(def.id())) {
                 // Don't add XReferences, just add their Values
                 allChildren.add(def);
             }
         }
-        allChildren.addAll(XomScheme.getParentClassChildren(container.getParentClass()));
+        allChildren.addAll(XomScheme.getParentClassChildren(container.parentClass()));
         for (XContainerDef child : allChildren) {
-            String value = child.getValue();
-            String xTypeText = child.getXtype();
+            String value = child.value();
+            String xTypeText = child.xType();
             boolean isXCollection = "XCollection".equals(xTypeText);
-            boolean hasParentXClass = child.getParentClass() != null;
+            boolean hasParentXClass = child.parentClass() != null;
             boolean isXClass = "XClass".equals(xTypeText);
-            boolean isXRef = "XRef".equals(child.getId());
+            boolean isXRef = "XRef".equals(child.id());
             if (isXCollection) {
                 // XCollection, basically an array of values
                 int size = bs.readVarint();
-                values.add(XCollection.read(bs, child, container.getName(), size, stringTable));
+                values.add(XCollection.read(bs, child, container.name(), size, stringTable));
             } else if (value != null) {
                 // Primitive type
                 ValueType valueType = ValueType.get(value);
                 if (valueType == null) {
                     throw new IOException("TODO");
                 }
-                values.add(ValueType.readValue(valueType, child.getName(), container.getName(), stringTable, bs));
-            } else if (child.getValueAttrs().size() == 1 && ValueType.getHref(child) != null) {
+                values.add(ValueType.readValue(valueType, child.name(), container.name(), stringTable, bs));
+            } else if (child.valueAttrs().size() == 1 && ValueType.getHref(child) != null) {
                 // This is a single reference to another value by ID
-                values.add(Ref.read(child.getName(), bs));
-            } else if (!child.getValueAttrs().isEmpty()) {
+                values.add(Ref.read(child.name(), bs));
+            } else if (!child.valueAttrs().isEmpty()) {
                 // Tuple with value attributes, such as x, y, and z
                 List<Value> tupleValues = new ArrayList<>();
-                for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
-                    tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), container.getName(), stringTable, bs));
+                for (Map.Entry<String, ValueType> entry : child.valueAttrs().entrySet()) {
+                    tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), container.name(), stringTable, bs));
                 }
-                values.add(new Tuple(child.getName(), tupleValues));
+                values.add(new Tuple(child.name(), tupleValues));
             } else {
                 throw new IOException("Unknown type: " + child);
             }

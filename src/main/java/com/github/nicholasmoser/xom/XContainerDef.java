@@ -38,43 +38,43 @@ public class XContainerDef {
         return NoCntr;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public String getValue() {
+    public String value() {
         return value;
     }
 
-    public List<XContainerDef> getChildren() {
+    public List<XContainerDef> children() {
         return children;
     }
 
-    public String getGuid() {
+    public String guid() {
         return guid;
     }
 
-    public int getXver() {
+    public int xVer() {
         return Xver;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
-    public String getXtype() {
+    public String xType() {
         return Xtype;
     }
 
-    public boolean isXpack() {
+    public boolean xPack() {
         return Xpack;
     }
 
-    public Map<String, ValueType> getValueAttrs() {
+    public Map<String, ValueType> valueAttrs() {
         return valueAttrs;
     }
 
-    public String getParentClass() {
+    public String parentClass() {
         return parentClass;
     }
 

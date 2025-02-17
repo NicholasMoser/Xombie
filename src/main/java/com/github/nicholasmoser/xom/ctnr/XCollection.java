@@ -7,7 +7,6 @@ import com.github.nicholasmoser.xom.XContainerDef;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,18 +25,18 @@ public class XCollection implements Value {
     public static XCollection read(ByteStream bs, XContainerDef child, String parentName, int size, StringTable stringTable) throws IOException {
         List<Value> values = new ArrayList<>();
         // Populate collection
-        String value = child.getValue();
+        String value = child.value();
         for (int i = 0; i < size; i++) {
-            if (child.getValueAttrs().size() == 1 && ValueType.getHref(child) != null) {
+            if (child.valueAttrs().size() == 1 && ValueType.getHref(child) != null) {
                 // This is a single reference to another value by ID
-                values.add(Ref.read(child.getName(), bs));
-            } else if (!child.getValueAttrs().isEmpty()) {
+                values.add(Ref.read(child.name(), bs));
+            } else if (!child.valueAttrs().isEmpty()) {
                 // Collection of tuples (e.g. x, y, z)
                 List<Value> tupleValues = new ArrayList<>(3);
-                for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
+                for (Map.Entry<String, ValueType> entry : child.valueAttrs().entrySet()) {
                     tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), parentName, stringTable, bs));
                 }
-                values.add(new Tuple(child.getName(), tupleValues));
+                values.add(new Tuple(child.name(), tupleValues));
             } else if (value != null ) {
                 // Collection of value (e.g. XInt)
                 ValueType valueType = ValueType.valueOf(value);
@@ -47,12 +46,12 @@ public class XCollection implements Value {
                     for (byte datum : bytes) {
                         data.add(new XByte(datum));
                     }
-                    return new XCollection(child.getName(), data);
+                    return new XCollection(child.name(), data);
                 }
-                values.add(ValueType.readValue(valueType, child.getName(), parentName, stringTable, bs));
+                values.add(ValueType.readValue(valueType, child.name(), parentName, stringTable, bs));
             }
         }
-        return new XCollection(child.getName(), values);
+        return new XCollection(child.name(), values);
     }
 
     private static ValueType getType(Map<String, ValueType> valueAttrs) {

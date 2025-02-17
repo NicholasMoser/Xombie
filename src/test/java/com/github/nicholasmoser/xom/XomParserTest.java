@@ -227,9 +227,9 @@ public class XomParserTest {
         assertThat(viewPoints.name()).isEqualTo("ViewPoint");
         assertThat(viewPoints.values().size()).isEqualTo(11);
         Tuple firstTuple = (Tuple) viewPoints.values().get(0);
-        assertThat(firstTuple.getName()).isEqualTo("ViewPoint");
-        assertThat(firstTuple.getValues().size()).isEqualTo(3);
-        List<Value> xyz = firstTuple.getValues();
+        assertThat(firstTuple.name()).isEqualTo("ViewPoint");
+        assertThat(firstTuple.values().size()).isEqualTo(3);
+        List<Value> xyz = firstTuple.values();
         XFloat z = (XFloat) xyz.get(2);
         assertThat(z.name()).isEqualTo("z");
         assertThat(z.value()).isEqualTo(300.0f);
@@ -251,8 +251,8 @@ public class XomParserTest {
         XContainerGeneric xvector = (XContainerGeneric) containers.get(80);
         assertThat(xvector.name()).isEqualTo("XVectorResourceDetails");
         Tuple xvectorTuple = (Tuple) xvector.values().get(0);
-        assertThat(xvectorTuple.getName()).isEqualTo("Value");
-        XFloat xvectorY = (XFloat) xvectorTuple.getValues().get(1);
+        assertThat(xvectorTuple.name()).isEqualTo("Value");
+        XFloat xvectorY = (XFloat) xvectorTuple.values().get(1);
         assertThat(xvectorY.name()).isEqualTo("y");
         assertThat(xvectorY.value()).isEqualTo(0f);
         name = (XString) xvector.values().get(1);

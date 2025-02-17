@@ -36,6 +36,12 @@ public enum ValueType {
     XContainer,
     XBase64Byte;
 
+    /**
+     * Safely attempt to get the ValueType for a name or null if it doesn't exist.
+     *
+     * @param name The value type name.
+     * @return The value type or null if it doesn't exist.
+     */
     public static ValueType get(String name) {
         try {
             return ValueType.valueOf(name);
@@ -44,6 +50,17 @@ public enum ValueType {
         }
     }
 
+    /**
+     * Reads a value of a specific type from a byte stream.
+     *
+     * @param valueType The type of value to read.
+     * @param name The name of the value.
+     * @param parentName The name of the parent of this value.
+     * @param stringTable The table of strings.
+     * @param bs The byte stream to read from.
+     * @return The value read.
+     * @throws IOException If any I/O exception occurs
+     */
     public static Value readValue(ValueType valueType, String name, String parentName, StringTable stringTable, ByteStream bs) throws IOException {
         return switch (valueType) {
             case XFloat -> com.github.nicholasmoser.xom.ctnr.XFloat.read(name, bs);
@@ -62,8 +79,14 @@ public enum ValueType {
         };
     }
 
+    /**
+     * Attempts to find the href attribute value from a container definition.
+     *
+     * @param container The container definition.
+     * @return The href attribute value or null if it doesn't exist.
+     */
     public static ValueType getHref(XContainerDef container) {
-        for (Map.Entry<String, ValueType> entry : container.getValueAttrs().entrySet()) {
+        for (Map.Entry<String, ValueType> entry : container.valueAttrs().entrySet()) {
             if ("href".equals(entry.getKey())) {
                 return entry.getValue();
             }

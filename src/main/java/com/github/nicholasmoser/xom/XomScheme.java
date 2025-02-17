@@ -71,13 +71,13 @@ public class XomScheme {
         Map<String, XContainerDef> containerNameMap = getContainerNameMap();
         XContainerDef parent = containerNameMap.get(parentClass);
         if (parent != null) {
-            for (XContainerDef def : parent.getChildren()) {
-                if (!"XRef".equals(def.getId())) {
+            for (XContainerDef def : parent.children()) {
+                if (!"XRef".equals(def.id())) {
                     // Don't add XReferences, just add their Values
                     values.add(def);
                 }
             }
-            values.addAll(getParentClassChildren(parent.getParentClass()));
+            values.addAll(getParentClassChildren(parent.parentClass()));
         }
         return values;
     }
@@ -85,18 +85,18 @@ public class XomScheme {
     private static void getContainerNameMap(List<XContainerDef> xContainerDefs, Map<String, XContainerDef> names) {
 
         for (XContainerDef xContainerDef : xContainerDefs) {
-            if (names.containsKey(xContainerDef.getName())) {
-                throw new IllegalStateException("Duplicate name: " + xContainerDef.getName());
+            if (names.containsKey(xContainerDef.name())) {
+                throw new IllegalStateException("Duplicate name: " + xContainerDef.name());
             }
-            if (xContainerDef.getGuid() != null) {
+            if (xContainerDef.guid() != null) {
                 // only insert if there's a GUID
-                names.put(xContainerDef.getName(), xContainerDef);
+                names.put(xContainerDef.name(), xContainerDef);
                 // Add shortened versions of names
-                if ("OccludingCameraPropertiesContainer".equals(xContainerDef.getName())) {
+                if ("OccludingCameraPropertiesContainer".equals(xContainerDef.name())) {
                     names.put("OccludingCameraPropertiesContai", xContainerDef);
                 }
             }
-            getContainerNameMap(xContainerDef.getChildren(), names);
+            getContainerNameMap(xContainerDef.children(), names);
         };
     }
 
