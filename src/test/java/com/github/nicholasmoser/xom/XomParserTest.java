@@ -379,14 +379,14 @@ public class XomParserTest {
         XContainer resourceContainer = (XContainer) containers.get(25);
         assertThat(resourceContainer.name()).isEqualTo("XContainerResourceDetails");
         List<Value> resourceValues = resourceContainer.values();
-        XUInt8 containerIndex = (XUInt8) resourceValues.get(0);
-        assertThat(containerIndex.name()).isEqualTo("ContainerIndex");
+        Ref containerIndex = (Ref) resourceValues.get(0);
+        assertThat(containerIndex.name()).isEqualTo("Value");
         assertThat(containerIndex.value()).isEqualTo(1);
         XString name = (XString) resourceValues.get(1);
         assertThat(name.name()).isEqualTo("Name");
         assertThat(name.value()).isEqualTo("AIParams.CPU1");
         XUInt flag = (XUInt) resourceValues.get(2);
-        assertThat(flag.name()).isEqualTo("Flag");
+        assertThat(flag.name()).isEqualTo("Flags");
         assertThat(flag.value()).isEqualTo(17);
         // Last container
         XContainer last = (XContainer) containers.get(containers.size() - 1);

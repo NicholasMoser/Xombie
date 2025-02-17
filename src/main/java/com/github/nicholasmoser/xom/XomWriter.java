@@ -35,9 +35,9 @@ public class XomWriter {
         writeContainers(containers, raf);
     }
 
-    private static void writeContainers(List<XContainer> containers, RandomAccessFile raf) {
+    private static void writeContainers(List<XContainer> containers, RandomAccessFile raf) throws IOException {
         for (XContainer container : containers) {
-
+            raf.write(container.toBytes());
         }
     }
 

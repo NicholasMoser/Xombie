@@ -40,44 +40,8 @@ public class XContainer {
         XType xType = XType.get(container.name());
         if (xType != null) {
             switch(xType) {
-                case XIntResourceDetails:
-                    values.add(XInt.read("Value", bs));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flags", bs));
-                    return new XContainer(typeName, values);
-                case XUintResourceDetails:
-                    values.add(XUInt.read("Value", bs));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flags", bs));
-                    return new XContainer(typeName, values);
-                case XStringResourceDetails:
-                    values.add(XString.read("Value", bs, stringTable));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flags", bs));
-                    return new XContainer(typeName, values);
-                case XFloatResourceDetails:
-                    values.add(XFloat.read("Value", bs));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flags", bs));
-                    return new XContainer(typeName, values);
-                case XContainerResourceDetails:
-                    values.add(XUInt8.read("ContainerIndex", bs));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flag", bs));
-                    return new XContainer(typeName, values);
-                case XVectorResourceDetails:
-                    List<Value> tupleValues = new ArrayList<>();
-                    tupleValues.add(XFloat.read("x", bs));
-                    tupleValues.add(XFloat.read("y", bs));
-                    tupleValues.add(XFloat.read("z", bs));
-                    values.add(new Tuple("Value", tupleValues));
-                    values.add(XString.read("Name", bs, stringTable));
-                    values.add(XUInt.read("Flags", bs));
-                    return new XContainer(typeName, values);
-                case XCustomDescriptor:
-                    values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
-                    return new XContainer(typeName, values);
                 case XBitmapDescriptor:
+                    // To fix this I need to read parent attributes that show up before this child
                     values.add(XString.read("ResourceId", bs, stringTable));
                     values.add(XUInt8.read("SectionId", bs));
                     values.add(XUInt8.read("SpriteScene", bs));
@@ -86,14 +50,21 @@ public class XContainer {
                     return new XContainer("XBitmapDescriptor", values);
                 case XAlphaTest:
                 case XBlendModeGL:
+                case XContainerResourceDetails:
                 case XCullFace:
+                case XCustomDescriptor:
                 case XDataBank:
                 case XDepthTest:
+                case XFloatResourceDetails:
                 case XGraphSet:
                 case XImage:
+                case XIntResourceDetails:
                 case XLightingEnable:
                 case XOglTextureMap:
+                case XStringResourceDetails:
                 case XTexFont:
+                case XUintResourceDetails:
+                case XVectorResourceDetails:
                 case XZBufferWriteEnable:
                     // Whitelist XContainers that can be handled automatically
                     break;
@@ -151,6 +122,10 @@ public class XContainer {
 
     public List<Value> values() {
         return values;
+    }
+
+    public byte[] toBytes() {
+        return new byte[1];
     }
 
     @Override
