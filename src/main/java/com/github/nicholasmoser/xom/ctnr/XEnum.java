@@ -34,6 +34,18 @@ public class XEnum implements Value {
         return new XEnum(name, value, mappedValue);
     }
 
+    public String name() {
+        return name;
+    }
+
+    public long value() {
+        return value;
+    }
+
+    public String mappedValue() {
+        return mappedValue;
+    }
+
     @Override
     public String toString() {
         return "XEnum{" +

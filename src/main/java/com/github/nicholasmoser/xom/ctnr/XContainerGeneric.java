@@ -132,13 +132,18 @@ public class XContainerGeneric implements XContainer {
         }
         // Normal containers, check children and parent class children
         List<XContainerDef> allChildren = new ArrayList<>();
-        allChildren.addAll(container.getChildren());
+        for (XContainerDef def : container.getChildren()) {
+            if (!"XRef".equals(def.getId())) {
+                // Don't add XReferences, just add their Values
+                allChildren.add(def);
+            }
+        }
         allChildren.addAll(XomScheme.getParentClassChildren(container.getParentClass()));
         for (XContainerDef child : allChildren) {
             String value = child.getValue();
             String xTypeText = child.getXtype();
             boolean isXCollection = "XCollection".equals(xTypeText);
-            boolean isXContainer = "XContainer".equals(child.getHref());
+            boolean hasHref = child.getHref() != null;
             boolean hasParentXClass = child.getParentClass() != null;
             boolean isXClass = "XClass".equals(xTypeText);
             boolean isXRef = "XRef".equals(child.getId());
@@ -157,10 +162,8 @@ public class XContainerGeneric implements XContainer {
                     tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), container.getName(), stringTable, bs));
                 }
                 values.add(new Tuple(child.getName(), tupleValues));
-            } else if (hasParentXClass) {
-                // We can skip if this is a subclass.
-            } else if (isXContainer) {
-                // This is a variable length byte referencing another XContainer by ID
+            } else if (hasHref) {
+                // This is a variable length byte referencing another value by ID
                 values.add(Ref.read(child.getName(), bs));
             } else {
                 throw new IOException("Unknown type: " + child);

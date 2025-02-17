@@ -38,6 +38,133 @@ public class XomParserTest {
     }
 
     @Test
+    public void testBundle02() throws Exception {
+        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
+        Xom xom = XomParser.parse(f);
+
+        // Check header
+        XomHeader header = xom.header();
+        assertThat(header.flag()).isEqualTo(2);
+        assertThat(header.numberOfTypes()).isEqualTo(18);
+        assertThat(header.maxCount()).isEqualTo(23);
+        assertThat(header.rootCount()).isEqualTo(5);
+
+        // Check types
+        List<XomType> types = xom.types();
+        assertThat(types.size()).isEqualTo(18);
+        assertThat(types.get(0).subType()).isEqualTo(0);
+        assertThat(types.get(0).size()).isEqualTo(4);
+        assertThat(types.get(0).name()).isEqualTo("XBitmapDescriptor");
+        assertThat(types.get(0).guid()).isEqualTo("87CF794F-A2AA-4C44-A9DB-7C9091245CB3");
+        assertThat(types.get(1).subType()).isEqualTo(0);
+        assertThat(types.get(1).size()).isEqualTo(0);
+        assertThat(types.get(1).name()).isEqualTo("XBaseResourceDescriptor");
+        assertThat(types.get(1).guid()).isEqualTo("4DCD7EFF-E238-4182-8828-CD940A39D137");
+        assertThat(types.get(2).subType()).isEqualTo(0);
+        assertThat(types.get(2).size()).isEqualTo(1);
+        assertThat(types.get(2).name()).isEqualTo("XGraphSet");
+        assertThat(types.get(2).guid()).isEqualTo("64BF3D0B-3941-40BB-B179-8F882D14449B");
+        assertThat(types.get(3).subType()).isEqualTo(0);
+        assertThat(types.get(3).size()).isEqualTo(0);
+        assertThat(types.get(3).name()).isEqualTo("XShader");
+        assertThat(types.get(3).guid()).isEqualTo("58A4C3A0-8C4D-4E94-AE28-975CC0D246E0");
+        assertThat(types.get(4).subType()).isEqualTo(0);
+        assertThat(types.get(4).size()).isEqualTo(0);
+        assertThat(types.get(4).name()).isEqualTo("XSimpleShader");
+        assertThat(types.get(4).guid()).isEqualTo("21BE2651-4990-41C0-A528-E1562E8F1FD0");
+        assertThat(types.get(17).subType()).isEqualTo(0);
+        assertThat(types.get(17).size()).isEqualTo(0);
+        assertThat(types.get(17).name()).isEqualTo("XContainer");
+        assertThat(types.get(17).guid()).isEqualTo("5E1CD446-48A3-44FE-A55A-E247B8F5E713");
+
+        // Check string table
+        StringTable stringTable = xom.stringTable();
+        assertThat(stringTable.lenStrs()).isEqualTo(121);
+        assertThat(stringTable.sizeStrs()).isEqualTo(9);
+        assertThat(stringTable.offsetToStr().size()).isEqualTo(9);
+        assertThat(stringTable.getString(0)).isEqualTo("");
+        assertThat(stringTable.getString(1)).isEqualTo("NGC.MCIcon0");
+        assertThat(stringTable.getString(8)).isEqualTo("Logos/NGCMC03.tga");
+
+        // Check containers
+        List<XContainer> containers = xom.containers();
+        assertThat(containers.size()).isEqualTo(23);
+        // First container
+        XContainerGeneric first = (XContainerGeneric) containers.get(0);
+        assertThat(first.name()).isEqualTo("XBitmapDescriptor");
+        assertThat(first.values().size()).isEqualTo(5);
+        XString resourceId = (XString) first.values().get(0);
+        assertThat(resourceId.name()).isEqualTo("ResourceId");
+        assertThat(resourceId.value()).isEqualTo("NGC.MCIcon0");
+        XUInt16 imageWidth = (XUInt16) first.values().get(3);
+        assertThat(imageWidth.name()).isEqualTo("ImageWidth");
+        assertThat(imageWidth.value()).isEqualTo(32);
+
+        // XImage resource
+        XContainerGeneric xImage = (XContainerGeneric) containers.get(15);
+        assertThat(xImage.name()).isEqualTo("XImage");
+        XString name = (XString) xImage.values().get(0);
+        assertThat(name.name()).isEqualTo("Name");
+        assertThat(name.value()).isEqualTo("Logos/NGCMC00.tga");
+        XCollection strides = (XCollection) xImage.values().get(5);
+        assertThat(strides.name()).isEqualTo("Strides");
+        assertThat(strides.values().size()).isEqualTo(1);
+        XEnum format = (XEnum) xImage.values().get(7);
+        assertThat(format.name()).isEqualTo("Format");
+        assertThat(format.value()).isEqualTo(1);
+        assertThat(format.mappedValue()).isEqualTo("kImageFormat_A8R8G8B8");
+        XCollection data = (XCollection) xImage.values().get(8);
+        assertThat(data.values().size()).isEqualTo(4096);
+        XByte firstByte = (XByte) data.values().get(0);
+        assertThat(firstByte.value()).isEqualTo((byte) 0x6C);
+
+        // Last XContainer, XOglTextureMap
+        XContainerGeneric xOgl = (XContainerGeneric) containers.get(22);
+        assertThat(xOgl.name()).isEqualTo("XOglTextureMap");
+        XEnum blend = (XEnum) xOgl.values().get(0);
+        assertThat(blend.name()).isEqualTo("Blend");
+        assertThat(blend.value()).isEqualTo(1);
+        assertThat(blend.mappedValue()).isEqualTo("kOglBlendModulate");
+        Ref texture = (Ref) xOgl.values().get(2);
+        assertThat(texture.name()).isEqualTo("Texture");
+        assertThat(texture.value()).isEqualTo(19);
+        XEnum addressModeS = (XEnum) xOgl.values().get(6);
+        assertThat(addressModeS.name()).isEqualTo("AddressModeS");
+        assertThat(addressModeS.value()).isEqualTo(1);
+        assertThat(addressModeS.mappedValue()).isEqualTo("kAddressModeRepeat");
+        XEnum magFilter = (XEnum) xOgl.values().get(8);
+        assertThat(magFilter.name()).isEqualTo("MagFilter");
+        assertThat(magFilter.value()).isEqualTo(2);
+        assertThat(magFilter.mappedValue()).isEqualTo("kFilterModeLinear");
+        XEnum mipFilter = (XEnum) xOgl.values().get(10);
+        assertThat(mipFilter.name()).isEqualTo("MipFilter");
+        assertThat(mipFilter.value()).isEqualTo(0);
+        assertThat(mipFilter.mappedValue()).isEqualTo("kFilterModeNone");
+
+        // Verify they are all XContainers
+        for (XContainer child : containers) {
+            assertThat(child).isOfAnyClassIn(XContainerGeneric.class);
+        }
+
+        // Check the name of a few of them
+        assertContainerName(containers.get(0), "XBitmapDescriptor");
+        assertContainerName(containers.get(3), "XBitmapDescriptor");
+        assertContainerName(containers.get(4), "XGraphSet");
+        assertContainerName(containers.get(5), "XTexFont");
+        assertContainerName(containers.get(8), "XTexFont");
+        assertContainerName(containers.get(9), "XAlphaTest");
+        assertContainerName(containers.get(10), "XZBufferWriteEnable");
+        assertContainerName(containers.get(11), "XDepthTest");
+        assertContainerName(containers.get(12), "XCullFace");
+        assertContainerName(containers.get(13), "XLightingEnable");
+        assertContainerName(containers.get(14), "XBlendModeGL");
+        assertContainerName(containers.get(15), "XImage");
+        assertContainerName(containers.get(18), "XImage");
+        assertContainerName(containers.get(19), "XOglTextureMap");
+        assertContainerName(containers.get(22), "XOglTextureMap");
+    }
+
+    @Test
     public void testCamTwk() throws Exception {
         Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
         Xom xom = XomParser.parse(f);

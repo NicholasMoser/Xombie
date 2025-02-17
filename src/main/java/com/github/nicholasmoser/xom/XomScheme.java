@@ -66,7 +66,12 @@ public class XomScheme {
         Map<String, XContainerDef> containerNameMap = getContainerNameMap();
         XContainerDef parent = containerNameMap.get(parentClass);
         if (parent != null) {
-            values.addAll(parent.getChildren());
+            for (XContainerDef def : parent.getChildren()) {
+                if (!"XRef".equals(def.getId())) {
+                    // Don't add XReferences, just add their Values
+                    values.add(def);
+                }
+            }
             values.addAll(getParentClassChildren(parent.getParentClass()));
         }
         return values;
