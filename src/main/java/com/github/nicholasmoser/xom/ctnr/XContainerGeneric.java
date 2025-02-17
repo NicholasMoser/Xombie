@@ -84,21 +84,7 @@ public class XContainerGeneric implements XContainer {
                     values.add(XUInt.read("Flags", bs));
                     return new XContainerGeneric(typeName, values);
                 case XDataBank:
-                    values.add(XUInt8.read("Section", bs));
-                    List<XContainerDef> children = container.getChildren();
-                    for (int i = 1; i < children.size(); i++) {
-                        XContainerDef child = children.get(i);
-                        String href = child.getHref();
-                        XomType xomType = getXomType(xomTypes, href);
-                        XUInt8 pointer = XUInt8.read(child.getName(), bs);
-                        values.add(pointer);
-                        if (pointer.value() != 0 && xomType != null) {
-                            for (int j = 0; j < xomType.size(); j++) {
-                                values.add(XUInt8.read("ContainerIndex", bs));
-                            }
-                        }
-                    }
-                    return new XContainerGeneric(typeName, values);
+                    break;
                 case XCustomDescriptor:
                     values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
                     return new XContainerGeneric(typeName, values);
@@ -110,11 +96,7 @@ public class XContainerGeneric implements XContainer {
                     values.add(XUInt16.read("ImageHeight", bs));
                     return new XContainerGeneric("XBitmapDescriptor", values);
                 case XGraphSet:
-                    int size = bs.readVarint();
-                    for (int i = 0; i < size; i++) {
-                        values.add(Graph.read("Graph", bs, stringTable));
-                    }
-                    return new XContainerGeneric("XGraphSet", values);
+                    break;
                 case XTexFont:
                 case XAlphaTest:
                 case XZBufferWriteEnable:
@@ -143,7 +125,6 @@ public class XContainerGeneric implements XContainer {
             String value = child.getValue();
             String xTypeText = child.getXtype();
             boolean isXCollection = "XCollection".equals(xTypeText);
-            boolean hasHref = child.getHref() != null;
             boolean hasParentXClass = child.getParentClass() != null;
             boolean isXClass = "XClass".equals(xTypeText);
             boolean isXRef = "XRef".equals(child.getId());
@@ -153,8 +134,14 @@ public class XContainerGeneric implements XContainer {
                 values.add(XCollection.read(bs, child, container.getName(), size, stringTable));
             } else if (value != null) {
                 // Primitive type
-                ValueType valueType = ValueType.valueOf(value);
+                ValueType valueType = ValueType.get(value);
+                if (valueType == null) {
+                    throw new IOException("TODO");
+                }
                 values.add(ValueType.readValue(valueType, child.getName(), container.getName(), stringTable, bs));
+            } else if (child.getValueAttrs().size() == 1 && ValueType.getHref(child) != null) {
+                // This is a single reference to another value by ID
+                values.add(Ref.read(child.getName(), bs));
             } else if (!child.getValueAttrs().isEmpty()) {
                 // Tuple with value attributes, such as x, y, and z
                 List<Value> tupleValues = new ArrayList<>();
@@ -162,9 +149,6 @@ public class XContainerGeneric implements XContainer {
                     tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), container.getName(), stringTable, bs));
                 }
                 values.add(new Tuple(child.getName(), tupleValues));
-            } else if (hasHref) {
-                // This is a variable length byte referencing another value by ID
-                values.add(Ref.read(child.getName(), bs));
             } else {
                 throw new IOException("Unknown type: " + child);
             }

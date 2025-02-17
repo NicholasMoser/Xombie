@@ -67,17 +67,12 @@ public class XContainerDefBuilder {
         return this;
     }
 
-    public XContainerDefBuilder setHref(String href) {
-        this.href = href;
-        return this;
-    }
-
     public XContainerDefBuilder setParentClass(String parentClass) {
         this.parentClass = parentClass;
         return this;
     }
 
     public XContainerDef createXContainer() {
-        return new XContainerDef(name, value, children, guid, xver, noCntr, id, xtype, xpack, href, valueAttrs, parentClass);
+        return new XContainerDef(name, value, children, guid, xver, noCntr, id, xtype, xpack, valueAttrs, parentClass);
     }
 }

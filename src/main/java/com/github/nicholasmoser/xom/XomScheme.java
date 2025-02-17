@@ -1,16 +1,14 @@
 package com.github.nicholasmoser.xom;
 
 import com.google.common.collect.Sets;
-import org.w3c.dom.*;
+import de.pdark.decentxml.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
 public class XomScheme {
-    private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack", "href");
+    private static final Set<String> NON_VALUE_ATTRS = Sets.newHashSet("guid", "Xver", "NoCntr", "id", "Xtype", "Xpack");
     private static List<XContainerDef> CONTAINER_DEFINITIONS;
     private static Map<String, XContainerDef> CONTAINER_NAME_MAP;
 
@@ -23,13 +21,20 @@ public class XomScheme {
             return CONTAINER_DEFINITIONS;
         }
         try (InputStream is = XomScheme.class.getResourceAsStream("XOMSCHM.xml")) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(is);
-            doc.normalizeDocument();
-            doc.getDocumentElement().normalize();
-            Element root = doc.getDocumentElement();
-            CONTAINER_DEFINITIONS = Collections.unmodifiableList(getChildren(root.getChildNodes(), null));
+            if (is == null) {
+                throw new IOException("Missing XOMSCHM.xml");
+            }
+            byte[] bytes = is.readAllBytes();
+            String text = new String(bytes);
+            // check for byte order mark EFBBBF and exclude it from the String if it exists
+            // https://en.wikipedia.org/wiki/Byte_order_mark
+            if (text.startsWith("\uFEFF")) {
+                text = text.substring(1);
+            }
+            XMLParser decentXMLParser = new XMLParser();
+            de.pdark.decentxml.Document doc = decentXMLParser.parse(new XMLStringSource(text));
+            Element root = doc.getRootElement();
+            CONTAINER_DEFINITIONS = Collections.unmodifiableList(getChildren(root.getChildren(), null));
             return CONTAINER_DEFINITIONS;
         } catch (Exception e) {
             throw new IOException(e);
@@ -95,9 +100,9 @@ public class XomScheme {
         };
     }
 
-    private static XContainerDef getXContainer(Node node, String parentClass) {
+    private static XContainerDef getXContainer(Element node, String parentClass) {
         XContainerDefBuilder xContainer = new XContainerDefBuilder();
-        xContainer.setName(node.getNodeName());
+        xContainer.setName(node.getName());
         xContainer.setValue(getValueText(node));
 
         // Handle parent
@@ -105,74 +110,73 @@ public class XomScheme {
 
         // Handle attributes
         LinkedHashMap<String, ValueType> valueAttributes = new LinkedHashMap<>();
-        NamedNodeMap attrs = node.getAttributes();
-        for (int i = 0; i < attrs.getLength(); i++) {
-            Node attr = attrs.item(i);
-            String name = attr.getNodeName();
+        List<Attribute> attrs = node.getAttributes();
+        for (Attribute attr : attrs) {
+            String name = attr.getName();
             if (!NON_VALUE_ATTRS.contains(name)) {
-                ValueType value = ValueType.valueOf(attr.getNodeValue());
-                valueAttributes.put(name, value);
+                ValueType value = ValueType.get(attr.getValue());
+                // If the href is a specific container, just put down XContainer
+                valueAttributes.put(name, Objects.requireNonNullElse(value, ValueType.XContainer));
             }
         }
         String xTypeValue = null; // need to see if this is a class or not
         xContainer.setValueAttrs(valueAttributes);
-        Node guid = attrs.getNamedItem("guid");
+        Attribute guid = getNamedItem(attrs, "guid");
         if (guid != null) {
-            xContainer.setGuid(guid.getNodeValue());
+            xContainer.setGuid(guid.getValue());
         }
-        Node xVer = attrs.getNamedItem("Xver");
+        Attribute xVer = getNamedItem(attrs, "Xver");
         if (xVer != null) {
-            xContainer.setXver(Integer.parseInt(xVer.getNodeValue()));
+            xContainer.setXver(Integer.parseInt(xVer.getValue()));
         }
-        Node noCntr = attrs.getNamedItem("NoCntr");
+        Attribute noCntr = getNamedItem(attrs, "NoCntr");
         if (noCntr != null) {
-            xContainer.setNoCntr(Boolean.parseBoolean(noCntr.getNodeValue()));
+            xContainer.setNoCntr(Boolean.parseBoolean(noCntr.getValue()));
         }
-        Node id = attrs.getNamedItem("id");
+        Attribute id = getNamedItem(attrs, "id");
         if (id != null) {
-            xContainer.setId(id.getNodeValue());
+            xContainer.setId(id.getValue());
         }
-        Node xType = attrs.getNamedItem("Xtype");
+        Attribute xType = getNamedItem(attrs, "Xtype");
         if (xType != null) {
-            xTypeValue = xType.getNodeValue();
+            xTypeValue = xType.getValue();
             xContainer.setXtype(xTypeValue);
         }
-        Node xPack = attrs.getNamedItem("Xpack");
+        Attribute xPack = getNamedItem(attrs, "Xpack");
         if (xPack != null) {
-            xContainer.setXpack(Boolean.parseBoolean(xPack.getNodeValue()));
-        }
-        Node href = attrs.getNamedItem("href");
-        if (href != null) {
-            xContainer.setHref(href.getNodeValue());
+            xContainer.setXpack(Boolean.parseBoolean(xPack.getValue()));
         }
 
         // Handle children, propagate class name if it's a class for children to use
-        boolean isParentClass = "XClass".equals(xTypeValue) && !"XContainer".equals(node.getNodeName());
-        String className = isParentClass ? node.getNodeName() : null;
-        xContainer.setChildren(getChildren(node.getChildNodes(), className));
+        boolean isParentClass = "XClass".equals(xTypeValue) && !"XContainer".equals(node.getName());
+        String className = isParentClass ? node.getName() : null;
+        xContainer.setChildren(getChildren(node.getChildren(), className));
 
         return xContainer.createXContainer();
     }
 
-    private static List<XContainerDef> getChildren(NodeList children, String parentClass) {
-        List<XContainerDef> xContainerDefs = new ArrayList<>(children.getLength());
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
+    private static Attribute getNamedItem(List<Attribute> attrs, String name) {
+        for (Attribute attr : attrs) {
+            if (name.equals(attr.getName()))
+                return attr;
+        }
+        return null;
+    }
+
+    private static List<XContainerDef> getChildren(List<Element> children, String parentClass) {
+        List<XContainerDef> xContainerDefs = new ArrayList<>(children.size());
+        for (Element child : children) {
+            if (child.getType() == XMLTokenizer.Type.ELEMENT) {
                 xContainerDefs.add(getXContainer(child, parentClass));
             }
         }
         return xContainerDefs;
     }
 
-    private static String getValueText(Node node) {
-        NodeList children = node.getChildNodes();
-        if (children.getLength() != 1) {
-            return null;
-        }
-        Node child = children.item(0);
-        if (child.getNodeType() == Node.TEXT_NODE) {
-            return child.getNodeValue();
+    private static String getValueText(Element node) {
+        if (node.getType() == XMLTokenizer.Type.ELEMENT) {
+            String text = node.getText();
+            return text.isBlank() ? null : text;
         } else {
             return null;
         }

@@ -26,9 +26,12 @@ public class XCollection implements Value {
     public static XCollection read(ByteStream bs, XContainerDef child, String parentName, int size, StringTable stringTable) throws IOException {
         List<Value> values = new ArrayList<>();
         // Populate collection
+        String value = child.getValue();
         for (int i = 0; i < size; i++) {
-            String value = child.getValue();
-            if (!child.getValueAttrs().isEmpty()) {
+            if (child.getValueAttrs().size() == 1 && ValueType.getHref(child) != null) {
+                // This is a single reference to another value by ID
+                values.add(Ref.read(child.getName(), bs));
+            } else if (!child.getValueAttrs().isEmpty()) {
                 // Collection of tuples (e.g. x, y, z)
                 List<Value> tupleValues = new ArrayList<>(3);
                 for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
@@ -47,12 +50,18 @@ public class XCollection implements Value {
                     return new XCollection(child.getName(), data);
                 }
                 values.add(ValueType.readValue(valueType, child.getName(), parentName, stringTable, bs));
-            } else if (child.getHref().equals("XContainer")) {
-                // Collection of XContainers
-                values.add(Ref.read(child.getName(), bs));
             }
         }
         return new XCollection(child.getName(), values);
+    }
+
+    private static ValueType getType(Map<String, ValueType> valueAttrs) {
+        for (Map.Entry<String, ValueType> entry : valueAttrs.entrySet()) {
+            if ("Type".equals(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     public String name() {

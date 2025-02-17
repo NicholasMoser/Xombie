@@ -392,16 +392,19 @@ public class XomParserTest {
         XContainerGeneric last = (XContainerGeneric) containers.get(containers.size() - 1);
         assertThat(last.name()).isEqualTo("XDataBank");
         List<Value> lastValues = last.values();
-        assertThat(lastValues.size()).isEqualTo(34);
+        assertThat(lastValues.size()).isEqualTo(9);
         XUInt8 section = (XUInt8) lastValues.get(0);
         assertThat(section.name()).isEqualTo("Section");
         assertThat(section.value()).isEqualTo(0);
-        XUInt8 containerResources = (XUInt8) lastValues.get(7);
+        XCollection containerResources = (XCollection) lastValues.get(6);
         assertThat(containerResources.name()).isEqualTo("ContainerResources");
-        assertThat(containerResources.value()).isEqualTo(24);
-        containerIndex = (XUInt8) lastValues.get(8);
-        assertThat(containerIndex.name()).isEqualTo("ContainerIndex");
-        assertThat(containerIndex.value()).isEqualTo(26);
+        assertThat(containerResources.values().size()).isEqualTo(24);
+        Ref ref = (Ref) containerResources.values().get(0);
+        assertThat(ref.name()).isEqualTo("ContainerResources");
+        assertThat(ref.value()).isEqualTo(26);
+        XCollection colorResources = (XCollection) lastValues.get(8);
+        assertThat(colorResources.name()).isEqualTo("ColorResources");
+        assertThat(colorResources.values().size()).isEqualTo(0);
     }
 
     private void assertContainerName(XContainer container, String name) {

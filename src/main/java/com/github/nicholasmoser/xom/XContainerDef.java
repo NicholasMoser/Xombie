@@ -17,11 +17,10 @@ public class XContainerDef {
     private final String id;
     private final String Xtype;
     private final boolean Xpack;
-    private final String href;
     private final Map<String, ValueType> valueAttrs;
     private final String parentClass;
 
-    public XContainerDef(String name, String value, List<XContainerDef> children, String guid, int xver, boolean noCntr, String id, String xtype, boolean xpack, String href, Map<String, ValueType> valueAttrs, String parentClass) {
+    public XContainerDef(String name, String value, List<XContainerDef> children, String guid, int xver, boolean noCntr, String id, String xtype, boolean xpack, Map<String, ValueType> valueAttrs, String parentClass) {
         this.name = name;
         this.value = value;
         this.children = children;
@@ -32,7 +31,6 @@ public class XContainerDef {
         this.Xtype = xtype;
         this.Xpack = xpack;
         this.valueAttrs = valueAttrs;
-        this.href = href;
         this.parentClass = parentClass;
     }
 
@@ -76,10 +74,6 @@ public class XContainerDef {
         return valueAttrs;
     }
 
-    public String getHref() {
-        return href;
-    }
-
     public String getParentClass() {
         return parentClass;
     }
@@ -96,7 +90,6 @@ public class XContainerDef {
                 ", id='" + id + '\'' +
                 ", Xtype='" + Xtype + '\'' +
                 ", Xpack=" + Xpack +
-                ", href='" + href + '\'' +
                 ", valueAttrs=" + valueAttrs +
                 ", parentClass='" + parentClass + '\'' +
                 '}';
