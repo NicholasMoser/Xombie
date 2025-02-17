@@ -82,6 +82,67 @@ public class XomScheme {
         return values;
     }
 
+    /**
+     * Gets the children of a class name, used to lookup XContainer definition children of a parent class. This will
+     * only return children BEFORE the current class.
+     *
+     * @param parentClass The name of the parent class.
+     * @return The XContainer definition children of the class.
+     * @throws IOException If any I/O exception occurs
+     */
+    public static List<XContainerDef> getParentClassChildrenBefore(String currentClass, String parentClass) throws IOException {
+        if (parentClass == null) {
+            return Collections.emptyList();
+        }
+        List<XContainerDef> values = new ArrayList<>();
+        Map<String, XContainerDef> containerNameMap = getContainerNameMap();
+        XContainerDef parent = containerNameMap.get(parentClass);
+        if (parent != null) {
+            for (XContainerDef def : parent.children()) {
+                if (currentClass.equals(def.name())) {
+                    return values; // We've hit the current class, exit now
+                }
+                if (!"XRef".equals(def.id())) {
+                    // Don't add XReferences, just add their Values
+                    values.add(def);
+                }
+            }
+            values.addAll(getParentClassChildren(parent.parentClass()));
+        }
+        return values;
+    }
+
+    /**
+     * Gets the children of a class name, used to lookup XContainer definition children of a parent class. This will
+     * only return children AFTER the current class.
+     *
+     * @param parentClass The name of the parent class.
+     * @return The XContainer definition children of the class.
+     * @throws IOException If any I/O exception occurs
+     */
+    public static List<XContainerDef> getParentClassChildrenAfter(String currentClass, String parentClass) throws IOException {
+        if (parentClass == null) {
+            return Collections.emptyList();
+        }
+        boolean start = false;
+        List<XContainerDef> values = new ArrayList<>();
+        Map<String, XContainerDef> containerNameMap = getContainerNameMap();
+        XContainerDef parent = containerNameMap.get(parentClass);
+        if (parent != null) {
+            for (XContainerDef def : parent.children()) {
+                if (currentClass.equals(def.name())) {
+                    start = true; // We've hit the current class, begin actually adding children
+                }
+                if (start && !"XRef".equals(def.id())) {
+                    // Don't add XReferences, just add their Values
+                    values.add(def);
+                }
+            }
+            values.addAll(getParentClassChildren(parent.parentClass()));
+        }
+        return values;
+    }
+
     private static void getContainerNameMap(List<XContainerDef> xContainerDefs, Map<String, XContainerDef> names) {
 
         for (XContainerDef xContainerDef : xContainerDefs) {

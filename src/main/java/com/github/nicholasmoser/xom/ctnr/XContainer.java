@@ -41,13 +41,6 @@ public class XContainer {
         if (xType != null) {
             switch(xType) {
                 case XBitmapDescriptor:
-                    // To fix this I need to read parent attributes that show up before this child
-                    values.add(XString.read("ResourceId", bs, stringTable));
-                    values.add(XUInt8.read("SectionId", bs));
-                    values.add(XUInt8.read("SpriteScene", bs));
-                    values.add(XUInt16.read("ImageWidth", bs));
-                    values.add(XUInt16.read("ImageHeight", bs));
-                    return new XContainer("XBitmapDescriptor", values);
                 case XAlphaTest:
                 case XBlendModeGL:
                 case XContainerResourceDetails:
@@ -72,15 +65,7 @@ public class XContainer {
                     throw new IOException("TODO: Implement " + xType);
             }
         }
-        // Grab children and parent class children to get list of all children
-        List<XContainerDef> allChildren = new ArrayList<>();
-        for (XContainerDef def : container.children()) {
-            if (!"XRef".equals(def.id())) {
-                // Don't add XReferences, just add their Values
-                allChildren.add(def);
-            }
-        }
-        allChildren.addAll(XomScheme.getParentClassChildren(container.parentClass()));
+        List<XContainerDef> allChildren = getAllChildren(container);
         for (XContainerDef child : allChildren) {
             String value = child.value();
             String xTypeText = child.xType();
@@ -114,6 +99,32 @@ public class XContainer {
             }
         }
         return new XContainer(typeName, values);
+    }
+
+    /**
+     * Get the list of all children of this container definition, as well as the children of its parent class.
+     * The order of the children is important here, if a parent has an element before the subclass, that element
+     * should come before the subclass elements. So the order is basically:
+     *
+     * <ol>
+     *     <li>Parent class children BEFORE this subclass</li>
+     *     <li>The children of this subclass</li>
+     *     <li>Parent class children AFTER this subclass</li>
+     * </ol>
+     * @param container The container definition to get all children for.
+     * @return All children of the container definition.
+     */
+    private static List<XContainerDef> getAllChildren(XContainerDef container) throws IOException {
+        List<XContainerDef> allChildren = new ArrayList<>();
+        allChildren.addAll(XomScheme.getParentClassChildrenBefore(container.name(), container.parentClass()));
+        for (XContainerDef def : container.children()) {
+            if (!"XRef".equals(def.id())) {
+                // Don't add XReferences, just add their Values
+                allChildren.add(def);
+            }
+        }
+        allChildren.addAll(XomScheme.getParentClassChildrenAfter(container.name(), container.parentClass()));
+        return allChildren;
     }
 
     public String name() {
