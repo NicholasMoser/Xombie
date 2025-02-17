@@ -90,7 +90,7 @@ public class XomParserTest {
         List<XContainer> containers = xom.containers();
         assertThat(containers.size()).isEqualTo(23);
         // First container
-        XContainerGeneric first = (XContainerGeneric) containers.get(0);
+        XContainer first = (XContainer) containers.get(0);
         assertThat(first.name()).isEqualTo("XBitmapDescriptor");
         assertThat(first.values().size()).isEqualTo(5);
         XString resourceId = (XString) first.values().get(0);
@@ -101,7 +101,7 @@ public class XomParserTest {
         assertThat(imageWidth.value()).isEqualTo(32);
 
         // XImage resource
-        XContainerGeneric xImage = (XContainerGeneric) containers.get(15);
+        XContainer xImage = (XContainer) containers.get(15);
         assertThat(xImage.name()).isEqualTo("XImage");
         XString name = (XString) xImage.values().get(0);
         assertThat(name.name()).isEqualTo("Name");
@@ -119,7 +119,7 @@ public class XomParserTest {
         assertThat(firstByte.value()).isEqualTo((byte) 0x6C);
 
         // Last XContainer, XOglTextureMap
-        XContainerGeneric xOgl = (XContainerGeneric) containers.get(22);
+        XContainer xOgl = (XContainer) containers.get(22);
         assertThat(xOgl.name()).isEqualTo("XOglTextureMap");
         XEnum blend = (XEnum) xOgl.values().get(0);
         assertThat(blend.name()).isEqualTo("Blend");
@@ -143,7 +143,7 @@ public class XomParserTest {
 
         // Verify they are all XContainers
         for (XContainer child : containers) {
-            assertThat(child).isOfAnyClassIn(XContainerGeneric.class);
+            assertThat(child).isOfAnyClassIn(XContainer.class);
         }
 
         // Check the name of a few of them
@@ -217,7 +217,7 @@ public class XomParserTest {
         List<XContainer> containers = xom.containers();
         assertThat(containers.size()).isEqualTo(100);
         // First container
-        XContainerGeneric first = (XContainerGeneric) containers.get(0);
+        XContainer first = (XContainer) containers.get(0);
         assertThat(first.name()).isEqualTo("TrackCameraContainer");
         assertThat(first.values().size()).isEqualTo(8);
         XFloat lookSpeed = (XFloat) first.values().get(1);
@@ -235,7 +235,7 @@ public class XomParserTest {
         assertThat(z.value()).isEqualTo(300.0f);
 
         // XUInt resource
-        XContainerGeneric xuint = (XContainerGeneric) containers.get(22);
+        XContainer xuint = (XContainer) containers.get(22);
         assertThat(xuint.name()).isEqualTo("XUintResourceDetails");
         XUInt value = (XUInt) xuint.values().get(0);
         assertThat(value.name()).isEqualTo("Value");
@@ -248,7 +248,7 @@ public class XomParserTest {
         assertThat(flags.value()).isEqualTo(0);
 
         // XVector resource
-        XContainerGeneric xvector = (XContainerGeneric) containers.get(80);
+        XContainer xvector = (XContainer) containers.get(80);
         assertThat(xvector.name()).isEqualTo("XVectorResourceDetails");
         Tuple xvectorTuple = (Tuple) xvector.values().get(0);
         assertThat(xvectorTuple.name()).isEqualTo("Value");
@@ -264,7 +264,7 @@ public class XomParserTest {
 
         // Verify they are all XContainers
         for (XContainer child : containers) {
-            assertThat(child).isOfAnyClassIn(XContainerGeneric.class);
+            assertThat(child).isOfAnyClassIn(XContainer.class);
         }
 
         // Check the name of a few of them
@@ -357,7 +357,7 @@ public class XomParserTest {
         List<XContainer> containers = xom.containers();
         assertThat(containers.size()).isEqualTo(50);
         // First container
-        XContainerGeneric firstAI = (XContainerGeneric) containers.get(0);
+        XContainer firstAI = (XContainer) containers.get(0);
         assertThat(firstAI.name()).isEqualTo("AIParametersContainer");
         List<Value> values = firstAI.values();
         XFloat floatVal = (XFloat) values.get(0);
@@ -376,7 +376,7 @@ public class XomParserTest {
         assertThat(lastVal.name()).isEqualTo("PrefWeaponAnimal");
         assertThat(lastVal.value()).isEqualTo(1.0f);
         // First XContainerResourceDetails
-        XContainerGeneric resourceContainer = (XContainerGeneric) containers.get(25);
+        XContainer resourceContainer = (XContainer) containers.get(25);
         assertThat(resourceContainer.name()).isEqualTo("XContainerResourceDetails");
         List<Value> resourceValues = resourceContainer.values();
         XUInt8 containerIndex = (XUInt8) resourceValues.get(0);
@@ -389,7 +389,7 @@ public class XomParserTest {
         assertThat(flag.name()).isEqualTo("Flag");
         assertThat(flag.value()).isEqualTo(17);
         // Last container
-        XContainerGeneric last = (XContainerGeneric) containers.get(containers.size() - 1);
+        XContainer last = (XContainer) containers.get(containers.size() - 1);
         assertThat(last.name()).isEqualTo("XDataBank");
         List<Value> lastValues = last.values();
         assertThat(lastValues.size()).isEqualTo(9);
@@ -408,7 +408,7 @@ public class XomParserTest {
     }
 
     private void assertContainerName(XContainer container, String name) {
-        XContainerGeneric xContainer = (XContainerGeneric) container;
+        XContainer xContainer = (XContainer) container;
         assertThat(xContainer.name()).isEqualTo(name);
     }
 }

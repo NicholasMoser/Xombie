@@ -3,7 +3,6 @@ package com.github.nicholasmoser.xom;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.GUID;
 import com.github.nicholasmoser.xom.ctnr.XContainer;
-import com.github.nicholasmoser.xom.ctnr.XContainerGeneric;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,7 +51,7 @@ public class XomParser {
                     // CTNR is apparently optional after the string table?
                     bs.skipWord();
                 }
-                XContainer container = XContainerGeneric.read(bs, type, types, stringTable);
+                XContainer container = XContainer.read(bs, type, stringTable);
                 containers.add(container);
             }
         }
