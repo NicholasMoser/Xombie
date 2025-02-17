@@ -557,6 +557,21 @@ public class ByteUtils {
       }
     }
   }
+  /**
+   * Align a RandomAccessFile to a provided alignment byte-boundary by writing zero bytes.
+   *
+   * @param raf The RandomAccessFile to align.
+   * @param alignment The number of bytes to align on.
+   * @throws IOException If an I/O error occurs.
+   */
+  public static void alignWrite(RandomAccessFile raf, int alignment) throws IOException {
+    long offset = raf.getFilePointer();
+    int mod = (int) (offset % alignment);
+    if (mod != 0) {
+      int amt = alignment - mod;
+      raf.write(new byte[amt]);
+    }
+  }
 
   /**
    * Align a ByteStream to a provided alignment byte-boundary by skipping bytes.
