@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.xom.StringTable;
 
 import java.io.IOException;
@@ -8,22 +9,24 @@ import java.io.IOException;
 public class XString implements Value {
     private final String name;
     private final String value;
+    private final int strIndex;
 
-    private XString(String name, String value) {
+    private XString(String name, String value, int strIndex) {
         this.name = name;
         this.value = value;
+        this.strIndex = strIndex;
     }
 
     public static XString read(String name, ByteStream bs, StringTable stringTable) throws IOException {
-        int str_index = bs.readVarint();
-        if (str_index == -1) {
+        int strIndex = bs.readVarint();
+        if (strIndex == -1) {
             throw new IOException("Tried to read XString but at end of stream");
         }
-        String string_val = stringTable.getString(str_index);
-        if (string_val == null) {
-            throw new IOException("Missing string from string table at index " + str_index);
+        String stringVal = stringTable.getString(strIndex);
+        if (stringVal == null) {
+            throw new IOException("Missing string from string table at index " + strIndex);
         }
-        return new XString(name, string_val);
+        return new XString(name, stringVal, strIndex);
     }
 
     public String name() {
@@ -39,11 +42,12 @@ public class XString implements Value {
         return "XString{" +
                 "name='" + name + '\'' +
                 ", value='" + value + '\'' +
+                ", strIndex=" + strIndex +
                 '}';
     }
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return ByteUtils.writeVarint(strIndex);
     }
 }

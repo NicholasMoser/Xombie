@@ -631,4 +631,30 @@ public class ByteUtils {
     }
     return bytes;
   }
+
+
+  /**
+   * Encodes a variable-length integer, encoded using base-128 encoding. 7 bits are stored per byte, the most
+   * significant bit is a continuation flag.
+   *
+   * @param value The int.
+   * @return The variable-length bytes.
+   */
+  public static byte[] writeVarint(int value) {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+    while (true) {
+      int byteVal = value & 0x7F; // Extract the lowest 7 bits
+      value >>>= 7; // Logical shift right
+
+      if (value == 0) {
+        output.write(byteVal); // Last byte (MSB = 0)
+        break;
+      } else {
+        output.write(byteVal | 0x80); // Set MSB to indicate more bytes follow
+      }
+    }
+
+    return output.toByteArray();
+  }
 }

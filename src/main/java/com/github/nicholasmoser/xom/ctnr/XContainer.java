@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.xom.*;
 
 import java.io.ByteArrayOutputStream;
@@ -122,7 +123,9 @@ public class XContainer {
             baos.write(new byte[3]);
         }
         for (Value value : values) {
-            baos.write(value.toBytes());
+            byte[] bytes = value.toBytes();
+            System.out.println(ByteUtils.bytesToHexStringWords(bytes));
+            baos.write(bytes);
         }
         return baos.toByteArray();
     }

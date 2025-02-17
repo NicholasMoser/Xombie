@@ -916,4 +916,19 @@ public class ByteUtilsTest {
     assertThat(bs.readCString()).isEqualTo("okay?");
     assertThat(bs.offset()).isEqualTo(15);
   }
+
+  @Test
+  public void testVarint() throws Exception {
+    byte[] bytes = new byte[] {0x1};
+    ByteStream bs = new ByteStream(bytes);
+    int varint = bs.readVarint();
+    assertThat(varint).isEqualTo(1);
+    assertThat(ByteUtils.writeVarint(varint)).isEqualTo(bytes);
+
+    bytes = new byte[] {(byte) 0x80, 0x20};
+    bs = new ByteStream(bytes);
+    varint = bs.readVarint();
+    assertThat(varint).isEqualTo(4096);
+    assertThat(ByteUtils.writeVarint(varint)).isEqualTo(bytes);
+  }
 }
