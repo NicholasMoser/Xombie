@@ -14,18 +14,10 @@ import java.util.Map;
 public class XContainerGeneric implements XContainer {
     private final String name;
     private final List<Value> values;
-    private final XContainerGeneric parentClass;
 
     private XContainerGeneric(String name, List<Value> values) {
         this.name = name;
         this.values = values;
-        this.parentClass = null;
-    }
-
-    private XContainerGeneric(String name, List<Value> values, XContainerGeneric parentClass) {
-        this.name = name;
-        this.values = values;
-        this.parentClass = parentClass;
     }
 
     public static XContainer read(ByteStream bs, XomType type, List<XomType> xomTypes, StringTable stringTable) throws IOException {
@@ -82,8 +74,6 @@ public class XContainerGeneric implements XContainer {
                     values.add(XString.read("Name", bs, stringTable));
                     values.add(XUInt.read("Flags", bs));
                     return new XContainerGeneric(typeName, values);
-                case XDataBank:
-                    break;
                 case XCustomDescriptor:
                     values.add(XString.read("XBaseResourceDescriptor", bs, stringTable));
                     return new XContainerGeneric(typeName, values);
@@ -94,17 +84,17 @@ public class XContainerGeneric implements XContainer {
                     values.add(XUInt16.read("ImageWidth", bs));
                     values.add(XUInt16.read("ImageHeight", bs));
                     return new XContainerGeneric("XBitmapDescriptor", values);
-                case XGraphSet:
-                    break;
-                case XTexFont:
                 case XAlphaTest:
-                case XZBufferWriteEnable:
-                case XDepthTest:
-                case XCullFace:
-                case XLightingEnable:
                 case XBlendModeGL:
+                case XCullFace:
+                case XDataBank:
+                case XDepthTest:
+                case XGraphSet:
                 case XImage:
+                case XLightingEnable:
                 case XOglTextureMap:
+                case XTexFont:
+                case XZBufferWriteEnable:
                     // Whitelist XContainers that can be handled automatically
                     break;
                 default:
@@ -153,15 +143,6 @@ public class XContainerGeneric implements XContainer {
             }
         }
         return new XContainerGeneric(typeName, values);
-    }
-
-    private static XomType getXomType(List<XomType> xomTypes, String name) {
-        for (XomType xomType : xomTypes) {
-            if (name.equals(xomType.name())) {
-                return xomType;
-            }
-        }
-        return null;
     }
 
     public String name() {
