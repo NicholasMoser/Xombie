@@ -17,9 +17,17 @@ public class XEnum implements Value {
         this.mappedValue = mappedValue;
     }
 
-    public static XEnum read(String name, ByteStream bs, Map<Long, String> mapping) throws IOException {
+    public static XEnum read(String name, String parentName, ByteStream bs) throws IOException {
         long value = ByteUtils.toUint32LE(bs.readNBytes(4));
-        String mappedValue = mapping.get(value);
+        String key = parentName + "/" + name;
+        String mappedValue = switch (key) {
+            case "XAlphaTest/CompareFunction", "XDepthTest/CompareFunction" -> XEnumMaps.COMPARE_FUNCTIONS.get(value);
+            case "XCullFace/CullMode" -> XEnumMaps.CULL_MODES.get(value);
+            case "XLightingEnable/Normalize" -> XEnumMaps.NORMALIZE.get(value);
+            case "XBlendModeGL/SourceFactor", "XBlendModeGL/DestFactor" -> XEnumMaps.FACTORS.get(value);
+            case "XImage/Format" -> XEnumMaps.IMAGE_FORMATS.get(value);
+            default -> throw new IOException("TODO");
+        };
         return new XEnum(name, value, mappedValue);
     }
 

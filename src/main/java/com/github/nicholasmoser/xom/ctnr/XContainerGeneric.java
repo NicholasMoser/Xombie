@@ -116,17 +116,15 @@ public class XContainerGeneric implements XContainer {
                     }
                     return new XContainerGeneric("XGraphSet", values);
                 case XTexFont:
-                    return XTexFont.read(bs, stringTable);
                 case XAlphaTest:
-                    return XAlphaTest.read(bs);
                 case XZBufferWriteEnable:
-                    return XZBufferWriteEnable.read(bs);
                 case XDepthTest:
-                    return XDepthTest.read(bs);
                 case XCullFace:
-                    return XCullFace.read(bs);
                 case XLightingEnable:
-                    return XLightingEnable.read(bs);
+                case XBlendModeGL:
+                case XImage:
+                    // Whitelist XContainers that can be handled automatically
+                    break;
                 default:
                     throw new IOException("TODO: Implement " + xType);
             }
@@ -137,42 +135,36 @@ public class XContainerGeneric implements XContainer {
         allChildren.addAll(XomScheme.getParentClassChildren(container.getParentClass()));
         for (XContainerDef child : allChildren) {
             String value = child.getValue();
-            if (value == null) {
-                String xTypeText = child.getXtype();
-                if ("XCollection".equals(xTypeText)) {
-                    // XCollection, basically an array of values
-                    int size = bs.readByte();
-                    values.add(XCollection.read(bs, child, size, stringTable));
-                } else if (!child.getValueAttrs().isEmpty()) {
-                    // Tuple with value attributes, such as x, y, and z
-                    List<Value> tupleValues = new ArrayList<>();
-                    for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
-                        tupleValues.add(readValue(entry.getValue(), entry.getKey(), stringTable, bs));
-                    }
-                    values.add(new Tuple(child.getName(), tupleValues));
-                } else {
-                    // Anything else
-                    System.out.println();
-                }
-            } else {
+            String xTypeText = child.getXtype();
+            boolean isXCollection = "XCollection".equals(xTypeText);
+            boolean isXContainer = "XContainer".equals(child.getHref());
+            boolean hasParentXClass = child.getParentClass() != null;
+            boolean isXClass = "XClass".equals(xTypeText);
+            boolean isXRef = "XRef".equals(child.getId());
+            if (isXCollection) {
+                // XCollection, basically an array of values
+                int size = bs.readVarint();
+                values.add(XCollection.read(bs, child, container.getName(), size, stringTable));
+            } else if (value != null) {
+                // Primitive type
                 ValueType valueType = ValueType.valueOf(value);
-                values.add(readValue(valueType, child.getName(), stringTable, bs));
+                values.add(ValueType.readValue(valueType, child.getName(), container.getName(), stringTable, bs));
+            } else if (!child.getValueAttrs().isEmpty()) {
+                // Tuple with value attributes, such as x, y, and z
+                List<Value> tupleValues = new ArrayList<>();
+                for (Map.Entry<String, ValueType> entry : child.getValueAttrs().entrySet()) {
+                    tupleValues.add(ValueType.readValue(entry.getValue(), entry.getKey(), container.getName(), stringTable, bs));
+                }
+                values.add(new Tuple(child.getName(), tupleValues));
+            } else if (hasParentXClass) {
+                // We can skip if this is a subclass.
+            } else if (isXContainer) {
+                values.add(Ref.read(child.getName(), bs));
+            } else {
+                throw new IOException("Unknown type: " + child);
             }
         }
         return new XContainerGeneric(typeName, values);
-    }
-
-    public static Value readValue(ValueType valueType, String name, StringTable stringTable, ByteStream bs) throws IOException {
-        return switch (valueType) {
-            case XFloat -> XFloat.read(name, bs);
-            case XBool -> XBool.read(name, bs);
-            case XString -> XString.read(name, bs, stringTable);
-            case XInt -> XInt.read(name, bs);
-            case XUInt -> XUInt.read(name, bs);
-            case XUInt8 -> XUInt8.read(name, bs);
-            case XUInt16 -> XUInt16.read(name, bs);
-            default -> throw new IOException("Type not yet implemented: " + valueType);
-        };
     }
 
     private static XomType getXomType(List<XomType> xomTypes, String name) {

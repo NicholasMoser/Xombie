@@ -1,5 +1,10 @@
 package com.github.nicholasmoser.xom;
 
+import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.xom.ctnr.*;
+
+import java.io.IOException;
+
 /**
  * A primitive value type for xom files.
  */
@@ -27,5 +32,22 @@ public enum ValueType {
     XBitmap16,
     XColor4444,
     XGUID,
-    XContainer
+    XContainer,
+    XBase64Byte;
+
+    public static Value readValue(ValueType valueType, String name, String parentName, StringTable stringTable, ByteStream bs) throws IOException {
+        return switch (valueType) {
+            case XFloat -> com.github.nicholasmoser.xom.ctnr.XFloat.read(name, bs);
+            case XBool -> com.github.nicholasmoser.xom.ctnr.XBool.read(name, bs);
+            case XString -> com.github.nicholasmoser.xom.ctnr.XString.read(name, bs, stringTable);
+            case XInt -> com.github.nicholasmoser.xom.ctnr.XInt.read(name, bs);
+            case XUInt -> com.github.nicholasmoser.xom.ctnr.XUInt.read(name, bs);
+            case XUInt8 -> com.github.nicholasmoser.xom.ctnr.XUInt8.read(name, bs);
+            case XUInt16 -> com.github.nicholasmoser.xom.ctnr.XUInt16.read(name, bs);
+            case XEnum -> com.github.nicholasmoser.xom.ctnr.XEnum.read(name, parentName, bs);
+            case XVector2f -> com.github.nicholasmoser.xom.ctnr.XVector2f.read(name, bs);
+            case XVector4f -> com.github.nicholasmoser.xom.ctnr.XVector4f.read(name, bs);
+            default -> throw new IOException("Type not yet implemented: " + valueType);
+        };
+    }
 }
