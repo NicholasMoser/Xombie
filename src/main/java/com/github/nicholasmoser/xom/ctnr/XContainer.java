@@ -36,35 +36,6 @@ public class XContainer {
         }
 
         // Containers with special handling
-        // TODO: I feel like these should be handled in XOMSCHM.xml but it would break passivity with xom2xml :/
-        XType xType = XType.get(container.name());
-        if (xType != null) {
-            switch(xType) {
-                case XBitmapDescriptor:
-                case XAlphaTest:
-                case XBlendModeGL:
-                case XContainerResourceDetails:
-                case XCullFace:
-                case XCustomDescriptor:
-                case XDataBank:
-                case XDepthTest:
-                case XFloatResourceDetails:
-                case XGraphSet:
-                case XImage:
-                case XIntResourceDetails:
-                case XLightingEnable:
-                case XOglTextureMap:
-                case XStringResourceDetails:
-                case XTexFont:
-                case XUintResourceDetails:
-                case XVectorResourceDetails:
-                case XZBufferWriteEnable:
-                    // Whitelist XContainers that can be handled automatically
-                    break;
-                default:
-                    throw new IOException("TODO: Implement " + xType);
-            }
-        }
         List<XContainerDef> allChildren = getAllChildren(container);
         for (XContainerDef child : allChildren) {
             String value = child.value();
@@ -115,8 +86,8 @@ public class XContainer {
      * @return All children of the container definition.
      */
     private static List<XContainerDef> getAllChildren(XContainerDef container) throws IOException {
-        List<XContainerDef> allChildren = new ArrayList<>();
-        allChildren.addAll(XomScheme.getParentClassChildrenBefore(container.name(), container.parentClass()));
+        List<XContainerDef> before = XomScheme.getParentClassChildrenBefore(container.name(), container.parentClass());
+        List<XContainerDef> allChildren = new ArrayList<>(before);
         for (XContainerDef def : container.children()) {
             if (!"XRef".equals(def.id())) {
                 // Don't add XReferences, just add their Values
