@@ -6,4 +6,9 @@ public class XColor4ub implements Value {
     public static XColor4ub read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

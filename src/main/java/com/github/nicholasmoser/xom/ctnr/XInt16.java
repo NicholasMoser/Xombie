@@ -6,4 +6,9 @@ public class XInt16 implements Value {
     public static XInt16 read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

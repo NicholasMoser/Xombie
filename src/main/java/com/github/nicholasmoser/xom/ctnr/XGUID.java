@@ -26,4 +26,9 @@ public class XGUID implements Value {
                 ", xGUID='" + xGUID + '\'' +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

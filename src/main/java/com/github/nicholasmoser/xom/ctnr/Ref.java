@@ -35,4 +35,9 @@ public class Ref implements Value {
                 ", value=" + value +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        return new byte[0];
+    }
 }

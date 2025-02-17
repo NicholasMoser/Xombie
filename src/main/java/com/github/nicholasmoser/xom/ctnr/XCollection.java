@@ -78,4 +78,9 @@ public class XCollection implements Value {
                 ", values=" + values +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

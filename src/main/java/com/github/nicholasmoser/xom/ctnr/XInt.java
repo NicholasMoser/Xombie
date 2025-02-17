@@ -33,4 +33,9 @@ public class XInt implements Value {
                 ", value=" + value +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

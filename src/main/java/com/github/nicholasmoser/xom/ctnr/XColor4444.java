@@ -6,4 +6,9 @@ public class XColor4444 implements Value {
     public static XColor4444 read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

@@ -4,7 +4,6 @@ import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class XEnum implements Value {
     private final String name;
@@ -53,5 +52,10 @@ public class XEnum implements Value {
                 ", value=" + value +
                 ", mappedValue='" + mappedValue + '\'' +
                 '}';
+    }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
     }
 }

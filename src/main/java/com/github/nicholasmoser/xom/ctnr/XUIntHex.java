@@ -6,4 +6,9 @@ public class XUIntHex implements Value {
     public static XUIntHex read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

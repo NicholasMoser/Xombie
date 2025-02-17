@@ -6,4 +6,9 @@ public class XMatrix3 implements Value {
     public static XMatrix3 read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

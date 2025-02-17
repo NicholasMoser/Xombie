@@ -28,4 +28,9 @@ public class XVector2f implements Value {
                 ", y=" + y +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

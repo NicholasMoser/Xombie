@@ -6,4 +6,9 @@ public class XKey implements Value {
     public static XKey read(ByteStream bs) {
         throw new RuntimeException("TODO");
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }

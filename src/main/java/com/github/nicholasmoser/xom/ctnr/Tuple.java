@@ -29,4 +29,9 @@ public class Tuple implements Value {
                 ", values=" + values +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        return new byte[0];
+    }
 }

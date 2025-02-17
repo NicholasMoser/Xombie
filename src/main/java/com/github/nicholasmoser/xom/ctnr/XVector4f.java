@@ -36,4 +36,9 @@ public class XVector4f implements Value {
                 ", w=" + w +
                 '}';
     }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
 }
