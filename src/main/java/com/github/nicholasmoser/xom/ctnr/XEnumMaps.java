@@ -66,4 +66,22 @@ public class XEnumMaps {
             Map.entry(25L, "kImageFormat_Linear"),
             Map.entry(26L, "kImageFormat_Count")
     );
+
+    public static final Map<Long, String> BLENDS = Map.of(0L, "kOglBlendReplace",
+            1L, "kOglBlendModulate",
+            2L, "kOglBlendDecal",
+            3L, "kOglBlendBlend",
+            4L, "kOglBlendAdd");
+
+    public static final Map<Long, String> ADDRESS_MODES = Map.of(0L, "kAddressModeInvalid",
+            1L, "kAddressModeRepeat",
+            2L, "kAddressModeMirror",
+            3L, "kAddressModeClamp",
+            4L, "kAddressModeBorder");
+
+    public static final Map<Long, String> FILTER_MODES = Map.of(0L, "kFilterModeNone",
+            1L, "kFilterModeNearest",
+            2L, "kFilterModeLinear",
+            3L, "kFilterModeAnisotropic",
+            4L, "kFilterMode_Count");
 }

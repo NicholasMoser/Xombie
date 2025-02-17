@@ -26,7 +26,10 @@ public class XEnum implements Value {
             case "XLightingEnable/Normalize" -> XEnumMaps.NORMALIZE.get(value);
             case "XBlendModeGL/SourceFactor", "XBlendModeGL/DestFactor" -> XEnumMaps.FACTORS.get(value);
             case "XImage/Format" -> XEnumMaps.IMAGE_FORMATS.get(value);
-            default -> throw new IOException("TODO");
+            case "XOglTextureMap/Blend" -> XEnumMaps.BLENDS.get(value);
+            case "XOglTextureMap/AddressModeS", "XOglTextureMap/AddressModeT" -> XEnumMaps.ADDRESS_MODES.get(value);
+            case "XOglTextureMap/MagFilter", "XOglTextureMap/MinFilter", "XOglTextureMap/MipFilter" -> XEnumMaps.FILTER_MODES.get(value);
+            default -> throw new IOException("TODO: " + key);
         };
         return new XEnum(name, value, mappedValue);
     }

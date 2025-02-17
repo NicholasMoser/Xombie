@@ -123,6 +123,7 @@ public class XContainerGeneric implements XContainer {
                 case XLightingEnable:
                 case XBlendModeGL:
                 case XImage:
+                case XOglTextureMap:
                     // Whitelist XContainers that can be handled automatically
                     break;
                 default:
@@ -159,6 +160,7 @@ public class XContainerGeneric implements XContainer {
             } else if (hasParentXClass) {
                 // We can skip if this is a subclass.
             } else if (isXContainer) {
+                // This is a variable length byte referencing another XContainer by ID
                 values.add(Ref.read(child.getName(), bs));
             } else {
                 throw new IOException("Unknown type: " + child);
