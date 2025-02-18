@@ -16,12 +16,13 @@ public class Tuple implements Value {
         this.values = values;
     }
 
-    public String name() {
-        return name;
-    }
-
     public List<Value> values() {
         return values;
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 
     @Override

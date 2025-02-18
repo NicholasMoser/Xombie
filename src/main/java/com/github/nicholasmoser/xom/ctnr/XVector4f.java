@@ -27,6 +27,16 @@ public class XVector4f implements Value {
     }
 
     @Override
+    public String name() {
+        throw new RuntimeException("TODO");
+    }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
+
+    @Override
     public String toString() {
         return "XVector4f{" +
                 "name='" + name + '\'' +
@@ -35,10 +45,5 @@ public class XVector4f implements Value {
                 ", z=" + z +
                 ", w=" + w +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        throw new RuntimeException("TODO");
     }
 }

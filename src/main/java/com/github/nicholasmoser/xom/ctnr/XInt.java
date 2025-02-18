@@ -18,12 +18,18 @@ public class XInt implements Value {
         return new XInt(name, ByteUtils.toInt32LE(bs.readNBytes(4)));
     }
 
+    public long value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public long value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
     }
 
     @Override
@@ -32,10 +38,5 @@ public class XInt implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        throw new RuntimeException("TODO");
     }
 }

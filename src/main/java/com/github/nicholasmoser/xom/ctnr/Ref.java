@@ -21,12 +21,18 @@ public class Ref implements Value {
         return new Ref(name, bs.readVarint());
     }
 
+    public int value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public int value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        return ByteUtils.writeVarint(value);
     }
 
     @Override
@@ -35,10 +41,5 @@ public class Ref implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        return ByteUtils.writeVarint(value);
     }
 }

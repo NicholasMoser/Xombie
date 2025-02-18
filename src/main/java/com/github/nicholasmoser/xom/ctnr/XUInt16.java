@@ -18,12 +18,18 @@ public class XUInt16 implements Value {
         return new XUInt16(name, ByteUtils.toUint16LE(bs.readNBytes(2)));
     }
 
+    public int value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public int value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        return ByteUtils.fromUint16LE(value);
     }
 
     @Override
@@ -32,10 +38,5 @@ public class XUInt16 implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        return ByteUtils.fromUint16LE(value);
     }
 }

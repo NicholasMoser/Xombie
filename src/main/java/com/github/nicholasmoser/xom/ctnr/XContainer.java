@@ -116,10 +116,11 @@ public class XContainer {
         if (!def.isNoCntr()) {
             baos.write(CTNR.getBytes(StandardCharsets.UTF_8));
             baos.write(new byte[3]);
+            System.out.println("CTNR: 43544E52000000");
         }
         for (Value value : values) {
             byte[] bytes = value.toBytes();
-            System.out.println(ByteUtils.bytesToHexString(bytes));
+            System.out.printf("%s: %s\n", value.name(), ByteUtils.bytesToHexString(bytes));
             baos.write(bytes);
         }
         return baos.toByteArray();

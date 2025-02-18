@@ -33,10 +33,6 @@ public class XEnum implements Value {
         return new XEnum(name, value, mappedValue);
     }
 
-    public String name() {
-        return name;
-    }
-
     public long value() {
         return value;
     }
@@ -46,16 +42,21 @@ public class XEnum implements Value {
     }
 
     @Override
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
+    }
+
+    @Override
     public String toString() {
         return "XEnum{" +
                 "name='" + name + '\'' +
                 ", value=" + value +
                 ", mappedValue='" + mappedValue + '\'' +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        throw new RuntimeException("TODO");
     }
 }

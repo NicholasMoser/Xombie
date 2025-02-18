@@ -122,6 +122,16 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a float to a 4-byte little-endian byte array.
+   *
+   * @param value The float.
+   * @return The output bytes.
+   */
+  public static byte[] fromFloatLE(float value) {
+    return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
+  }
+
+  /**
    * Converts a 2-byte big-endian byte array to a uint16 (as an int).
    *
    * @param bytes The bytes to use.

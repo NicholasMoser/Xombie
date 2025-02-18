@@ -12,14 +12,19 @@ public class XByte implements Value {
     }
 
     @Override
-    public String toString() {
-        return "XByte{" +
-                "data=" + data +
-                '}';
+    public String name() {
+        return "Byte";
     }
 
     @Override
     public byte[] toBytes() {
         throw new RuntimeException("TODO");
+    }
+
+    @Override
+    public String toString() {
+        return "XByte{" +
+                "data=" + data +
+                '}';
     }
 }

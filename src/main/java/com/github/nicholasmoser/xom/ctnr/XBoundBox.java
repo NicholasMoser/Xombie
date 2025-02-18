@@ -8,6 +8,11 @@ public class XBoundBox implements Value {
     }
 
     @Override
+    public String name() {
+        throw new RuntimeException("TODO");
+    }
+
+    @Override
     public byte[] toBytes() {
         throw new RuntimeException("TODO");
     }

@@ -17,12 +17,18 @@ public class XUInt8 implements Value {
         return new XUInt8(name, bs.readByte());
     }
 
+    public int value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public int value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        return new byte[] {(byte) value};
     }
 
     @Override
@@ -31,10 +37,5 @@ public class XUInt8 implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        return new byte[] {(byte) value};
     }
 }

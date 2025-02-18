@@ -21,12 +21,18 @@ public class XBool implements Value {
         return new XBool(name, bool_num == 1);
     }
 
+    public boolean value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public boolean value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
     }
 
     @Override
@@ -35,10 +41,5 @@ public class XBool implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        throw new RuntimeException("TODO");
     }
 }

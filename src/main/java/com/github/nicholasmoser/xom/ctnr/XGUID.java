@@ -20,15 +20,20 @@ public class XGUID implements Value {
     }
 
     @Override
-    public String toString() {
-        return "XGUID{" +
-                "name='" + name + '\'' +
-                ", xGUID='" + xGUID + '\'' +
-                '}';
+    public String name() {
+        return name;
     }
 
     @Override
     public byte[] toBytes() {
         return GUID.stringToBytes(xGUID);
+    }
+
+    @Override
+    public String toString() {
+        return "XGUID{" +
+                "name='" + name + '\'' +
+                ", xGUID='" + xGUID + '\'' +
+                '}';
     }
 }

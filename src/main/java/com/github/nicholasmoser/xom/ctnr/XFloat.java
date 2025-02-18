@@ -17,12 +17,18 @@ public class XFloat implements Value {
         return new XFloat(name, bs.readLEFloat());
     }
 
+    public float value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public float value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        throw new RuntimeException("TODO");
     }
 
     @Override
@@ -31,10 +37,5 @@ public class XFloat implements Value {
                 "name='" + name + '\'' +
                 ", value=" + value +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        throw new RuntimeException("TODO");
     }
 }

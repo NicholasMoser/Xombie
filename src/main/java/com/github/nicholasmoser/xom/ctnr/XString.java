@@ -29,12 +29,18 @@ public class XString implements Value {
         return new XString(name, stringVal, strIndex);
     }
 
+    public String value() {
+        return value;
+    }
+
+    @Override
     public String name() {
         return name;
     }
 
-    public String value() {
-        return value;
+    @Override
+    public byte[] toBytes() {
+        return ByteUtils.writeVarint(strIndex);
     }
 
     @Override
@@ -44,10 +50,5 @@ public class XString implements Value {
                 ", value='" + value + '\'' +
                 ", strIndex=" + strIndex +
                 '}';
-    }
-
-    @Override
-    public byte[] toBytes() {
-        return ByteUtils.writeVarint(strIndex);
     }
 }
