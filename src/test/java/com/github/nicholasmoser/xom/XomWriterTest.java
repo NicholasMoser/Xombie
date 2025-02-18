@@ -13,6 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class XomWriterTest {
     @Test
+    public void testBundle03() throws Exception {
+        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
+        Path out = Files.createTempFile("testBundle02", ".xom");
+        testXom(in, out);
+    }
+
+    @Test
     public void testBundle02() throws Exception {
         Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
         Path out = Files.createTempFile("testBundle02", ".xom");

@@ -28,6 +28,7 @@ public class XEnum implements Value {
             case "XOglTextureMap/Blend" -> XEnumMaps.BLENDS.get(value);
             case "XOglTextureMap/AddressModeS", "XOglTextureMap/AddressModeT" -> XEnumMaps.ADDRESS_MODES.get(value);
             case "XOglTextureMap/MagFilter", "XOglTextureMap/MinFilter", "XOglTextureMap/MipFilter" -> XEnumMaps.FILTER_MODES.get(value);
+            case "XPalette/Format" -> XEnumMaps.PALETTE_FORMAT.get(value);
             default -> throw new IOException("TODO: " + key);
         };
         return new XEnum(name, value, mappedValue);
