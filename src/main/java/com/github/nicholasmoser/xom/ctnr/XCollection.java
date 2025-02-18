@@ -58,13 +58,14 @@ public class XCollection implements Value {
         return new XCollection(child.name(), values);
     }
 
-    private static ValueType getType(Map<String, ValueType> valueAttrs) {
-        for (Map.Entry<String, ValueType> entry : valueAttrs.entrySet()) {
-            if ("Type".equals(entry.getKey())) {
-                return entry.getValue();
-            }
+    public static byte[] fromByteXCollection(XCollection collection) {
+        List<Value> values = collection.values();
+        byte[] bytes = new byte[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            XByte datum = (XByte) values.get(i);
+            bytes[i] = datum.value();
         }
-        return null;
+        return bytes;
     }
 
     public String name() {

@@ -3,8 +3,9 @@ package com.github.nicholasmoser.graphics;
 import java.util.Arrays;
 
 public class TGA {
-    private byte idlength; //  The idlength is the length of a string located after the header.
-    private byte colourmaptype;
+    // https://www.gc-forever.com/yagcd/chap17.html
+    private byte idLength; //  The idlength is the length of a string located after the header.
+    private byte colourMapType;
     /*
         Data Type field values:
         0  -  No image data included.
@@ -19,135 +20,126 @@ public class TGA {
        33  -  Compressed color-mapped data, using Huffman, Delta, and
               runlength encoding.  4-pass quadtree-type process.
      */
-    private final byte datatypecode;
-    private final short colourmaporigin;
-    private final short colourmaplength;
-    private final byte colourmapdepth;
-    private final short x_origin;
-    private final short y_origin;
+    private final byte dataTypeCode;
+    private final short colourMapOrigin;
+    private final short colourMapLength;
+    private final byte colourMapDepth;
+    private final short xOrigin;
+    private final short yOrigin;
     private final short width;
     private final short height;
-    private final byte bitsperpixel; // The bitsperpixel specifies the size of each colour value.
-    private final byte imagedescriptor;
+    private final byte bitsPerPixel; // The bitsperpixel specifies the size of each colour value.
+    private final byte imageDescriptor;
     private final byte[] data;
+    private final String fileName;
 
-    private TGA(byte idlength, byte colourmaptype, byte datatypecode, short colourmaporigin, short colourmaplength, byte colourmapdepth, short x_origin, short y_origin, short width, short height, byte bitsperpixel, byte imagedescriptor, byte[] data) {
-        this.idlength = idlength;
-        this.colourmaptype = colourmaptype;
-        this.datatypecode = datatypecode;
-        this.colourmaporigin = colourmaporigin;
-        this.colourmaplength = colourmaplength;
-        this.colourmapdepth = colourmapdepth;
-        this.x_origin = x_origin;
-        this.y_origin = y_origin;
+    TGA(byte idLength, byte colourMapType, byte dataTypeCode, short colourMapOrigin, short colourMapLength, byte colourMapDepth, short xOrigin, short yOrigin, short width, short height, byte bitsPerPixel, byte imageDescriptor, byte[] data, String fileName) {
+        this.idLength = idLength;
+        this.colourMapType = colourMapType;
+        this.dataTypeCode = dataTypeCode;
+        this.colourMapOrigin = colourMapOrigin;
+        this.colourMapLength = colourMapLength;
+        this.colourMapDepth = colourMapDepth;
+        this.xOrigin = xOrigin;
+        this.yOrigin = yOrigin;
         this.width = width;
         this.height = height;
-        this.bitsperpixel = bitsperpixel;
-        this.imagedescriptor = imagedescriptor;
+        this.bitsPerPixel = bitsPerPixel;
+        this.imageDescriptor = imageDescriptor;
         this.data = data;
+        this.fileName = fileName;
     }
 
-    public class TGABuilder {
-        private byte idlength;
-        private byte colourmaptype;
-        private byte datatypecode;
-        private short colourmaporigin;
-        private short colourmaplength;
-        private byte colourmapdepth;
+    public static class Builder {
+        private byte idLength;
+        private byte colourMapType;
+        private byte dataTypeCode;
+        private short colourMapOrigin;
+        private short colourMapLength;
+        private byte colourMapDepth;
         private short xOrigin;
         private short yOrigin;
         private short width;
         private short height;
-        private byte bitsperpixel;
-        private byte imagedescriptor;
+        private byte bitsPerPixel;
+        private byte imageDescriptor;
         private byte[] data;
+        private String fileName;
 
-        public TGABuilder idlength(byte idlength) {
-            this.idlength = idlength;
+        public Builder idLength(byte idLength) {
+            this.idLength = idLength;
             return this;
         }
 
-        public TGABuilder colourmaptype(byte colourmaptype) {
-            this.colourmaptype = colourmaptype;
+        public Builder colourMapType(byte colourMapType) {
+            this.colourMapType = colourMapType;
             return this;
         }
 
-        public TGABuilder datatypecode(byte datatypecode) {
-            this.datatypecode = datatypecode;
+        public Builder dataTypeCode(byte dataTypeCode) {
+            this.dataTypeCode = dataTypeCode;
             return this;
         }
 
-        public TGABuilder colourmaporigin(short colourmaporigin) {
-            this.colourmaporigin = colourmaporigin;
+        public Builder colourMapOrigin(short colourMapOrigin) {
+            this.colourMapOrigin = colourMapOrigin;
             return this;
         }
 
-        public TGABuilder colourmaplength(short colourmaplength) {
-            this.colourmaplength = colourmaplength;
+        public Builder colourMapLength(short colourMapLength) {
+            this.colourMapLength = colourMapLength;
             return this;
         }
 
-        public TGABuilder colourmapdepth(byte colourmapdepth) {
-            this.colourmapdepth = colourmapdepth;
+        public Builder colourMapDepth(byte colourMapDepth) {
+            this.colourMapDepth = colourMapDepth;
             return this;
         }
 
-        public TGABuilder xOrigin(short xOrigin) {
+        public Builder xOrigin(short xOrigin) {
             this.xOrigin = xOrigin;
             return this;
         }
 
-        public TGABuilder yOrigin(short yOrigin) {
+        public Builder yOrigin(short yOrigin) {
             this.yOrigin = yOrigin;
             return this;
         }
 
-        public TGABuilder width(short width) {
+        public Builder width(short width) {
             this.width = width;
             return this;
         }
 
-        public TGABuilder height(short height) {
+        public Builder height(short height) {
             this.height = height;
             return this;
         }
 
-        public TGABuilder bitsPerPixel(byte bitsperpixel) {
-            this.bitsperpixel = bitsperpixel;
+        public Builder bitsPerPixel(byte bitsPerPixel) {
+            this.bitsPerPixel = bitsPerPixel;
             return this;
         }
 
-        public TGABuilder imageDescriptor(byte imagedescriptor) {
-            this.imagedescriptor = imagedescriptor;
+        public Builder imageDescriptor(byte imageDescriptor) {
+            this.imageDescriptor = imageDescriptor;
             return this;
         }
 
-        public TGABuilder data(byte[] data) {
+        public Builder data(byte[] data) {
             this.data = data;
             return this;
         }
 
-        public TGA createTGA() {
-            return new TGA(idlength, colourmaptype, datatypecode, colourmaporigin, colourmaplength, colourmapdepth, xOrigin, yOrigin, width, height, bitsperpixel, imagedescriptor, data);
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public TGA build() {
+            return new TGA(idLength, colourMapType, dataTypeCode, colourMapOrigin, colourMapLength, colourMapDepth, xOrigin, yOrigin, width, height, bitsPerPixel, imageDescriptor, data, fileName);
         }
     }
 
-    @Override
-    public String toString() {
-        return "TGA{" +
-                "idlength=" + idlength +
-                ", colourmaptype=" + colourmaptype +
-                ", datatypecode=" + datatypecode +
-                ", colourmaporigin=" + colourmaporigin +
-                ", colourmaplength=" + colourmaplength +
-                ", colourmapdepth=" + colourmapdepth +
-                ", x_origin=" + x_origin +
-                ", y_origin=" + y_origin +
-                ", width=" + width +
-                ", height=" + height +
-                ", bitsperpixel=" + bitsperpixel +
-                ", imagedescriptor=" + imagedescriptor +
-                ", data=" + Arrays.toString(data) +
-                '}';
-    }
+
 }
