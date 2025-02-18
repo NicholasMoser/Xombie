@@ -112,6 +112,21 @@ public class ByteUtils {
   }
 
   /**
+   * Converts an int32 (as a long) to a 4-byte little-endian byte array.
+   *
+   * @param value The int32 (as an int) as a 4-byte little-endian array.
+   * @return The output bytes.
+   */
+  public static byte[] fromInt32LE(int value) {
+    return new byte[]{
+            (byte) (value),
+            (byte) (value >> 8),
+            (byte) (value >> 16),
+            (byte) (value >> 24),
+    };
+  }
+
+  /**
    * Converts a float to a 4-byte big-endian byte array.
    *
    * @param value The float.

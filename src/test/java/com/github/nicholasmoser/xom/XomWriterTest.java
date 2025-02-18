@@ -3,6 +3,7 @@ package com.github.nicholasmoser.xom;
 import com.github.nicholasmoser.utils.CRC32;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,24 @@ public class XomWriterTest {
     public void testBundle02() throws Exception {
         Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
         Path out = Files.createTempFile("testBundle02", ".xom");
+        testXom(in, out);
+    }
+
+    @Test
+    public void testAITwk() throws Exception {
+        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\AITwk.xom");
+        Path out = Files.createTempFile("testAITwk", ".xom");
+        testXom(in, out);
+    }
+
+    @Test
+    public void testCamTwk() throws Exception {
+        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
+        Path out = Files.createTempFile("testCamTwk", ".xom");
+        testXom(in, out);
+    }
+
+    public void testXom(Path in, Path out) throws IOException {
         System.out.println(out);
 
         // Read xom file and write it back out to file

@@ -7,9 +7,9 @@ import java.io.IOException;
 
 public class XInt implements Value {
     private final String name;
-    private final long value;
+    private final int value;
 
-    private XInt(String name, long value) {
+    private XInt(String name, int value) {
         this.name = name;
         this.value = value;
     }
@@ -18,7 +18,7 @@ public class XInt implements Value {
         return new XInt(name, ByteUtils.toInt32LE(bs.readNBytes(4)));
     }
 
-    public long value() {
+    public int value() {
         return value;
     }
 
@@ -29,7 +29,7 @@ public class XInt implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return ByteUtils.fromInt32LE(value);
     }
 
     @Override
