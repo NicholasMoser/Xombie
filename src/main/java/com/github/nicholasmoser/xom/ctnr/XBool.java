@@ -14,11 +14,11 @@ public class XBool implements Value {
     }
 
     public static XBool read(String name, ByteStream bs) throws IOException {
-        int bool_num = bs.read();
-        if (bool_num == -1) {
+        int boolNum = bs.read();
+        if (boolNum == -1) {
             throw new IOException("Tried to read XBool but at end of stream");
         }
-        return new XBool(name, bool_num == 1);
+        return new XBool(name, boolNum == 1);
     }
 
     public boolean value() {
@@ -32,7 +32,10 @@ public class XBool implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        if (value) {
+            return new byte[] { 0x1 };
+        }
+        return new byte[] { 0x0 };
     }
 
     @Override

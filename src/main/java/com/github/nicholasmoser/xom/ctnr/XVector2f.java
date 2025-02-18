@@ -32,7 +32,7 @@ public class XVector2f implements Value {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(8);
             baos.write(ByteUtils.fromFloatLE(x.value()));
-            baos.write(ByteUtils.fromFloatLE(x.value()));
+            baos.write(ByteUtils.fromFloatLE(y.value()));
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);

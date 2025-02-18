@@ -1,7 +1,9 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class XVector4f implements Value {
@@ -28,12 +30,21 @@ public class XVector4f implements Value {
 
     @Override
     public String name() {
-        throw new RuntimeException("TODO");
+        return name;
     }
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(16);
+            baos.write(ByteUtils.fromFloatLE(x.value()));
+            baos.write(ByteUtils.fromFloatLE(y.value()));
+            baos.write(ByteUtils.fromFloatLE(z.value()));
+            baos.write(ByteUtils.fromFloatLE(w.value()));
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

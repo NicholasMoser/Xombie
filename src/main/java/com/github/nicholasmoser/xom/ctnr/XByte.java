@@ -18,7 +18,7 @@ public class XByte implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return new byte[] {data};
     }
 
     @Override

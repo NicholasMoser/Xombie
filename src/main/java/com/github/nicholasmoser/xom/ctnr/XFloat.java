@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ public class XFloat implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return ByteUtils.fromFloatLE(value);
     }
 
     @Override

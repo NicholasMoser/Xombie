@@ -19,11 +19,13 @@ public class XContainer {
     private final String name;
     private final List<Value> values;
     private final XContainerDef def;
+    private final int flag;
 
-    private XContainer(String name, List<Value> values, XContainerDef def) {
+    private XContainer(String name, List<Value> values, XContainerDef def, int flag) {
         this.name = name;
         this.values = values;
         this.def = def;
+        this.flag = flag;
     }
 
     public static XContainer read(ByteStream bs, XomType type, StringTable stringTable) throws IOException {
@@ -36,9 +38,10 @@ public class XContainer {
         List<Value> values = new ArrayList<>();
 
         // All containers have 3 or 5 bytes following CTNR
-        // TODO: Sometimes null but sometimes isn't. What are these bytes?
+        int flag = 0;
         if (!def.isNoCntr()) {
-            bs.skipNBytes(3);
+            flag = bs.read();
+            bs.skipNBytes(2);
         }
 
         // Containers with special handling
@@ -74,7 +77,7 @@ public class XContainer {
                 throw new IOException("Unknown type: " + child);
             }
         }
-        return new XContainer(typeName, values, def);
+        return new XContainer(typeName, values, def, flag);
     }
 
     /**
@@ -115,8 +118,9 @@ public class XContainer {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (!def.isNoCntr()) {
             baos.write(CTNR.getBytes(StandardCharsets.UTF_8));
-            baos.write(new byte[3]);
-            System.out.println("CTNR: 43544E52000000");
+            baos.write((byte) flag);
+            baos.write(new byte[2]);
+            System.out.printf("CTNR: 43544E52%02X0000\n", (byte) flag);
         }
         for (Value value : values) {
             byte[] bytes = value.toBytes();

@@ -29,7 +29,7 @@ public class XUInt implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return ByteUtils.fromUint32LE(value);
     }
 
     @Override
