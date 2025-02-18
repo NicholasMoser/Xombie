@@ -36,6 +36,20 @@ public class ByteUtils {
   }
 
   /**
+   * Converts a uint16 (as an int) to a 2-byte little-endian byte array. Values over 65,535 will wrap
+   * back to zero.
+   *
+   * @param value the uint16 (as an int).
+   * @return The output bytes.
+   */
+  public static byte[] fromUint16LE(int value) {
+    return new byte[]{
+            (byte) (value),
+            (byte) (value >> 8),
+    };
+  }
+
+  /**
    * Converts a uint24 (as an int) to a 3-byte big-endian byte array. Values over 16,777,215 will
    * wrap back to zero.
    *

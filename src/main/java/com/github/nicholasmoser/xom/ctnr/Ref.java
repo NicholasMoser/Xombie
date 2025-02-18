@@ -1,6 +1,7 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.IOException;
 
@@ -38,6 +39,6 @@ public class Ref implements Value {
 
     @Override
     public byte[] toBytes() {
-        return new byte[0];
+        return ByteUtils.writeVarint(value);
     }
 }

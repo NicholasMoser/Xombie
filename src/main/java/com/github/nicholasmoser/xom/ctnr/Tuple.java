@@ -1,5 +1,7 @@
 package com.github.nicholasmoser.xom.ctnr;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,6 +34,14 @@ public class Tuple implements Value {
 
     @Override
     public byte[] toBytes() {
-        return new byte[0];
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (Value value : values) {
+                baos.write(value.toBytes());
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -52,8 +52,7 @@ public class XContainer {
             boolean isXRef = "XRef".equals(child.id());
             if (isXCollection) {
                 // XCollection, basically an array of values
-                int size = bs.readVarint();
-                values.add(XCollection.read(bs, child, def.name(), size, stringTable));
+                values.add(XCollection.read(bs, child, def.name(), stringTable));
             } else if (value != null) {
                 // Primitive type
                 ValueType valueType = ValueType.get(value);
@@ -112,10 +111,6 @@ public class XContainer {
         return values;
     }
 
-    public XContainerDef def() {
-        return def;
-    }
-
     public byte[] toBytes() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         if (!def.isNoCntr()) {
@@ -124,7 +119,7 @@ public class XContainer {
         }
         for (Value value : values) {
             byte[] bytes = value.toBytes();
-            System.out.println(ByteUtils.bytesToHexStringWords(bytes));
+            System.out.println(ByteUtils.bytesToHexString(bytes));
             baos.write(bytes);
         }
         return baos.toByteArray();

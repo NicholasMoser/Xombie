@@ -29,6 +29,6 @@ public class XGUID implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return GUID.stringToBytes(xGUID);
     }
 }

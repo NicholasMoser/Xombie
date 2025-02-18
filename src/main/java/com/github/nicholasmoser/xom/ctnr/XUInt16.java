@@ -36,6 +36,6 @@ public class XUInt16 implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return ByteUtils.fromUint16LE(value);
     }
 }

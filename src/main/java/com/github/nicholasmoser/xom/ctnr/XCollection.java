@@ -1,10 +1,13 @@
 package com.github.nicholasmoser.xom.ctnr;
 
 import com.github.nicholasmoser.utils.ByteStream;
+import com.github.nicholasmoser.utils.ByteUtils;
+import com.github.nicholasmoser.utils.GUID;
 import com.github.nicholasmoser.xom.StringTable;
 import com.github.nicholasmoser.xom.ValueType;
 import com.github.nicholasmoser.xom.XContainerDef;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +25,10 @@ public class XCollection implements Value {
         this.values = values;
     }
 
-    public static XCollection read(ByteStream bs, XContainerDef child, String parentName, int size, StringTable stringTable) throws IOException {
+    public static XCollection read(ByteStream bs, XContainerDef child, String parentName, StringTable stringTable) throws IOException {
         List<Value> values = new ArrayList<>();
         // Populate collection
+        int size = bs.readVarint();
         String value = child.value();
         for (int i = 0; i < size; i++) {
             if (child.valueAttrs().size() == 1 && ValueType.getHref(child) != null) {
@@ -81,6 +85,15 @@ public class XCollection implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos.write(ByteUtils.writeVarint(values.size()));
+            for (Value value : values) {
+                baos.write(value.toBytes());
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -35,6 +35,6 @@ public class XUInt8 implements Value {
 
     @Override
     public byte[] toBytes() {
-        throw new RuntimeException("TODO");
+        return new byte[] {(byte) value};
     }
 }
