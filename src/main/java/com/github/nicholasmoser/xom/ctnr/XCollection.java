@@ -68,6 +68,16 @@ public class XCollection implements Value {
         return bytes;
     }
 
+    public static byte[] fromXUint8Collection(XCollection collection) {
+        List<Value> values = collection.values();
+        byte[] bytes = new byte[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            XUInt8 datum = (XUInt8) values.get(i);
+            bytes[i] = (byte) datum.value();
+        }
+        return bytes;
+    }
+
     public String name() {
         return name;
     }

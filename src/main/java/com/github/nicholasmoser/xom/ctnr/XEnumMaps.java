@@ -85,7 +85,7 @@ public class XEnumMaps {
             3L, "kFilterModeAnisotropic",
             4L, "kFilterMode_Count");
 
-    public static final Map<Long, String> PALETTE_FORMAT = Map.of(0L, "kPaletteFormat_R8G8B8X8",
+    public static final Map<Long, String> PALETTE_FORMAT = Map.of(0L, " kPaletteFormat_R8G8B8X8",
             1L, "kPaletteFormat_R8G8B8A8",
             2L, "kPaletteFormat_R5G5B5",
             3L, "kPaletteFormat_R5G6B5",
