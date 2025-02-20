@@ -44,7 +44,7 @@ public class Palette {
                 "indexSize=" + indexSize +
                 ", flags=" + flags +
                 ", format='" + format + '\'' +
-                ", data=" + Arrays.toString(data) +
+                ", dataLength=" + data.length +
                 '}';
     }
 

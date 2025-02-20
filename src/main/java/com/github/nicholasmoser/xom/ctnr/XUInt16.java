@@ -9,7 +9,7 @@ public class XUInt16 implements Value {
     private final String name;
     private final int value;
 
-    private XUInt16(String name, int value) {
+    public XUInt16(String name, int value) {
         this.name = name;
         this.value = value;
     }

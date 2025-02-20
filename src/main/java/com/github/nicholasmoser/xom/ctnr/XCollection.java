@@ -20,7 +20,7 @@ public class XCollection implements Value {
     private final String name;
     private final List<Value> values;
 
-    private XCollection(String name, List<Value> values) {
+    public XCollection(String name, List<Value> values) {
         this.name = name;
         this.values = values;
     }
@@ -88,9 +88,10 @@ public class XCollection implements Value {
 
     @Override
     public String toString() {
+        String valuesText = values.size() > 100 ? ", valuesSize=" + values.size() : ", values=" + values;
         return "XCollection{" +
                 "name='" + name + '\'' +
-                ", values=" + values +
+                valuesText +
                 '}';
     }
 

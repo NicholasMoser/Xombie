@@ -82,8 +82,7 @@ public class XContainerDef {
     public String toString() {
         return "XContainerDef{" +
                 "name='" + name + '\'' +
-                ", value='" + value + '\'' +
-                ", children=" + children +
+                ", childrenLength=" + children.size() +
                 ", guid='" + guid + '\'' +
                 ", Xver=" + Xver +
                 ", NoCntr=" + NoCntr +

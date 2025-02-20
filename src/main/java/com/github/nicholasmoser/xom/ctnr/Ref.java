@@ -10,9 +10,9 @@ import java.io.IOException;
  */
 public class Ref implements Value {
     private final String name;
-    private final int value;
+    private int value;
 
-    private Ref(String name, int value) {
+    public Ref(String name, int value) {
         this.name = name;
         this.value = value;
     }
@@ -23,6 +23,10 @@ public class Ref implements Value {
 
     public int value() {
         return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     @Override

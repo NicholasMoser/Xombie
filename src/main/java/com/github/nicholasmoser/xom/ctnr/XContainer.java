@@ -124,7 +124,11 @@ public class XContainer {
         }
         for (Value value : values) {
             byte[] bytes = value.toBytes();
-            System.out.printf("%s: %s\n", value.name(), ByteUtils.bytesToHexString(bytes));
+            if (bytes.length > 200) {
+                System.out.printf("%s: (0x%X bytes)\n", value.name(), bytes.length);
+            } else {
+                System.out.printf("%s: %s\n", value.name(), ByteUtils.bytesToHexString(bytes));
+            }
             baos.write(bytes);
         }
         return baos.toByteArray();
@@ -134,8 +138,8 @@ public class XContainer {
     public String toString() {
         return "XContainer{" +
                 "name='" + name + '\'' +
-                ", values=" + values +
-                ", def=" + def +
+                ", valuesLength=" + values.size() +
+                ", defName=" + def.name() +
                 '}';
     }
 }

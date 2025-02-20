@@ -10,7 +10,7 @@ public class XEnum implements Value {
     private final long value;
     private final String mappedValue;
 
-    private XEnum(String name, long value, String mappedValue) {
+    public XEnum(String name, long value, String mappedValue) {
         this.name = name;
         this.value = value;
         this.mappedValue = mappedValue;

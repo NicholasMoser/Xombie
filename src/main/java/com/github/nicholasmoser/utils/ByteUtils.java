@@ -696,4 +696,19 @@ public class ByteUtils {
 
     return output.toByteArray();
   }
+
+  public static void swapBytes(byte[] array, int i, int j) {
+    byte temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+
+  public static void reverseBytes(byte[] array) {
+    int left = 0, right = array.length - 1;
+    while (left < right) {
+      swapBytes(array, left, right);
+      left++;
+      right--;
+    }
+  }
 }

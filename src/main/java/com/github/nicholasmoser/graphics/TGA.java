@@ -1,16 +1,15 @@
 package com.github.nicholasmoser.graphics;
 
-import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.utils.ByteUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class TGA {
+    // http://www.paulbourke.net/dataformats/tga/
     private byte idLength; //  The idlength is the length of a string located after the header.
     private byte colourMapType;
     /*
@@ -61,7 +60,23 @@ public class TGA {
         this.palette = palette;
     }
 
-    public String getFileName() {
+    public short width() {
+        return width;
+    }
+
+    public short height() {
+        return height;
+    }
+
+    public String format() {
+        return format;
+    }
+
+    public byte[] data() {
+        return data;
+    }
+
+    public String fileName() {
         return fileName;
     }
 
@@ -105,35 +120,6 @@ public class TGA {
             os.write(new byte[8]);
             os.write("TRUEVISION-XFILE.\0".getBytes(StandardCharsets.UTF_8));
         }
-    }
-
-    public static TGA readFromFile(Path filePath) throws IOException {
-        byte[] bytes = Files.readAllBytes(filePath);
-        ByteStream bs = new ByteStream(bytes);
-        TGA.Builder tga = new TGA.Builder();
-        tga.idLength(bs.readOneByte());
-        tga.colourMapType(bs.readOneByte());
-        tga.dataTypeCode(bs.readOneByte());
-        tga.colourMapOrigin(bs.readShortLE());
-        tga.colourMapLength(bs.readShortLE());
-        tga.colourMapDepth(bs.readOneByte());
-        tga.xOrigin(bs.readShortLE());
-        tga.yOrigin(bs.readShortLE());
-        short width = bs.readShortLE();
-        tga.width(width);
-        short height = bs.readShortLE();
-        tga.height(height);
-        byte bitsPerPixel = bs.readOneByte();
-        tga.bitsPerPixel(bitsPerPixel);
-        tga.imageDescriptor(bs.readOneByte());
-        int bytesToRead = (width * height * bitsPerPixel) / 8;
-        tga.data(bs.readNBytes(bytesToRead));
-        tga.format("kImageFormat_A8R8G8B8");
-        TGA out = tga.build();
-        if (out.bitsPerPixel != (byte) 32 && out.dataTypeCode != 2) {
-            throw new IOException(String.format("TODO: bitsPerPixel %d dataTypeCode %d", out.bitsPerPixel, out.dataTypeCode));
-        }
-        return out;
     }
 
     public static class Builder {
