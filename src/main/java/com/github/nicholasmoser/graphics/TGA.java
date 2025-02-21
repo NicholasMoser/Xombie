@@ -108,15 +108,9 @@ public class TGA {
                 //   Used for Icons and Banners on Memory Card.
                 //   This Format uses a palette in RGB5_A1 Format, the Pixel data is stored in 8x4 pixel tiles.
 
-                // 8-bit index to 4-byte value
-                byte[] paletteData = palette.data();
-                System.out.println("Start");
-                for (int i = 0; i < paletteData.length; i += 4) {
-                    byte[] bytes = new byte[] {paletteData[i], paletteData[i + 1], paletteData[i + 2], paletteData[i + 3]};
-                    System.out.printf("0x%X: 0x%X\n", i / 4, ByteUtils.toInt32(bytes));
-                    os.write(bytes);
-                }
-                os.write(data);
+                // 8-bit index maps to 4-byte color value
+                os.write(Gfx.convertCI8ColorSpaceToTGA(palette.data()));
+                os.write(Gfx.convertCI8IndicesToTGA(data, height, width));
             } else {
                 throw new IOException("TODO: " + format);
             }
