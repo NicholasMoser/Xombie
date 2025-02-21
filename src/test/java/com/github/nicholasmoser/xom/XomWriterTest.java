@@ -99,17 +99,6 @@ public class XomWriterTest {
         XContainer musyXDolby = xom.containers().get(14);
         XContainer musyXDolbyText = xom.containers().get(15);
 
-        // Read old palettes and TGAs
-        Palette palette1 = Palette.get(license, xom.containers());
-        Palette palette2 = Palette.get(musyXDolby, xom.containers());
-        Palette palette3 = Palette.get(musyXDolbyText, xom.containers());
-        TGA licenseTGA = TGAUtil.readFromXContainer(license, palette1);
-        TGA musyXDolbyTGA = TGAUtil.readFromXContainer(musyXDolby, palette2);
-        TGA musyXDolbyTextTGA = TGAUtil.readFromXContainer(musyXDolbyText, palette3);
-
-        Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
-        Files.createDirectories(baseDir.resolve(licenseTGA.fileName()).getParent());
-
         // Read new TGAs
         TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License.tga"));
         TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby.tga"));
