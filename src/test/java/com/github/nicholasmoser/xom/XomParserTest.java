@@ -15,13 +15,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class XomParserTest {
     @Test
     public void testSpecificXomFile() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
+        Path f = Worms3D.dir().resolve("files\\Bundles\\Bundle02.xom");
         XomParser.parse(f);
     }
 
     @Test
     public void testAllXomFiles() throws Exception {
-        try (Stream<Path> walk = Files.walk(Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files"))) {
+        try (Stream<Path> walk = Files.walk(Worms3D.dir().resolve("files"))) {
             walk.filter(Files::isRegularFile)
                     .forEach(this::check);
         }
@@ -39,7 +39,7 @@ public class XomParserTest {
 
     @Test
     public void testBundle02() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
+        Path f = Worms3D.dir().resolve("files\\Bundles\\Bundle02.xom");
         Xom xom = XomParser.parse(f);
 
         // Check header
@@ -166,7 +166,7 @@ public class XomParserTest {
 
     @Test
     public void testCamTwk() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
+        Path f = Worms3D.dir().resolve("files\\CamTwk.xom");
         Xom xom = XomParser.parse(f);
 
         // Check header
@@ -285,7 +285,7 @@ public class XomParserTest {
 
     @Test
     public void testAITwk() throws Exception {
-        Path f = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\AITwk.xom");
+        Path f = Worms3D.dir().resolve("files\\AITwk.xom");
         Xom xom = XomParser.parse(f);
 
         // Check header

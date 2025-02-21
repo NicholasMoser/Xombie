@@ -67,7 +67,7 @@ public class Gfx {
         for (int y = 0; y < height; y += 4) {
             for (int x = 0; x < width; x += 8) {
                 for (int iy = 0; iy < 4; iy++, srcIndex += 8) {
-                    int tdstIndex = (y + iy) * width + x;
+                    int tdstIndex = ((height - 1) - (y + iy)) * width + x;
                     System.arraycopy(data, srcIndex, buffer, tdstIndex, 8);
                 }
             }
@@ -90,7 +90,7 @@ public class Gfx {
         for (int y = 0; y < height; y += 4) {
             for (int x = 0; x < width; x += 8) {
                 for (int iy = 0; iy < 4; iy++, dstIndex += 8) {
-                    int tsrcIndex = (y + iy) * width + x;
+                    int tsrcIndex = ((height - 1) - (y + iy)) * width + x;
                     System.arraycopy(data, tsrcIndex, buffer, dstIndex, 8);
                 }
             }

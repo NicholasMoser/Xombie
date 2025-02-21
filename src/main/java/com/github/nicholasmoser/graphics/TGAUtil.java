@@ -62,7 +62,7 @@ public class TGAUtil {
                 .width((short) width.value())
                 .height((short) height.value())
                 .bitsPerPixel((byte) (palette != null ? 0x8 : 0x10))
-                .imageDescriptor((byte) 0)
+                .imageDescriptor((byte) 0x20)
                 .data(bytes)
                 .fileName(name.value())
                 .format(format.mappedValue())
@@ -96,7 +96,11 @@ public class TGAUtil {
         tga.height(height);
         byte bitsPerPixel = bs.readOneByte();
         tga.bitsPerPixel(bitsPerPixel);
-        tga.imageDescriptor(bs.readOneByte());
+        byte imageDescriptor = bs.readOneByte();
+        if (imageDescriptor != 0x20) {
+            throw new IOException("TODO");
+        }
+        tga.imageDescriptor(imageDescriptor);
         int bytesToRead = (width * height * bitsPerPixel) / 8;
         tga.data(bs.readNBytes(bytesToRead));
         tga.format("kImageFormat_A8R8G8B8");

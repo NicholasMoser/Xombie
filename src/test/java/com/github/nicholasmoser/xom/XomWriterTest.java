@@ -19,7 +19,7 @@ public class XomWriterTest {
 
     @Test
     public void testRemoveContainer() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
         Path out = Files.createTempFile("testModifyBundle03", ".xom");
         Xom xom = XomParser.parse(in);
         assertThat(xom.containers().size()).isEqualTo(22);
@@ -46,7 +46,7 @@ public class XomWriterTest {
 
     @Test
     public void testWriteTGAs() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
 
         // Read xom file and write it back out to file
         Xom xom = XomParser.parse(in);
@@ -68,14 +68,14 @@ public class XomWriterTest {
         Files.createDirectories(baseDir.resolve(licenseTGA.fileName()).getParent());
 
         // Write TGAs to file
-        licenseTGA.writeToFile(baseDir.resolve(licenseTGA.fileName()));
-        musyXDolbyTGA.writeToFile(baseDir.resolve(musyXDolbyTGA.fileName()));
-        musyXDolbyTextTGA.writeToFile(baseDir.resolve(musyXDolbyTextTGA.fileName()));
+        licenseTGA.writeToFile(baseDir.resolve(licenseTGA.fileName()), false);
+        musyXDolbyTGA.writeToFile(baseDir.resolve(musyXDolbyTGA.fileName()), false);
+        musyXDolbyTextTGA.writeToFile(baseDir.resolve(musyXDolbyTextTGA.fileName()), false);
     }
 
     @Test
     public void testModifyBundle03() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
         Path out = Files.createTempFile("testModifyBundle03", ".xom");
 
         // Read xom file and write it back out to file
@@ -115,7 +115,7 @@ public class XomWriterTest {
 
     @Test
     public void testModifyBundle02() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle02.xom");
         Path out = Files.createTempFile("testModifyBundle02", ".xom");
 
         // Read xom file and write it back out to file
@@ -134,10 +134,10 @@ public class XomWriterTest {
         // Write TGAs to file
         Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
         Files.createDirectories(baseDir.resolve(ngcmc00TGA.fileName()).getParent());
-        ngcmc00TGA.writeToFile(baseDir.resolve(ngcmc00TGA.fileName()));
-        ngcmc01TGA.writeToFile(baseDir.resolve(ngcmc01TGA.fileName()));
-        ngcmc02TGA.writeToFile(baseDir.resolve(ngcmc02TGA.fileName()));
-        ngcmc03TGA.writeToFile(baseDir.resolve(ngcmc03TGA.fileName()));
+        ngcmc00TGA.writeToFile(baseDir.resolve(ngcmc00TGA.fileName()), false);
+        ngcmc01TGA.writeToFile(baseDir.resolve(ngcmc01TGA.fileName()), false);
+        ngcmc02TGA.writeToFile(baseDir.resolve(ngcmc02TGA.fileName()), false);
+        ngcmc03TGA.writeToFile(baseDir.resolve(ngcmc03TGA.fileName()), false);
 
         // Write xom to file
         try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {
@@ -147,28 +147,28 @@ public class XomWriterTest {
 
     @Test
     public void testBundle03() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
         Path out = Files.createTempFile("testBundle03", ".xom");
         testXom(in, out);
     }
 
     @Test
     public void testBundle02() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle02.xom");
+        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle02.xom");
         Path out = Files.createTempFile("testBundle02", ".xom");
         testXom(in, out);
     }
 
     @Test
     public void testAITwk() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\AITwk.xom");
+        Path in = Worms3D.dir().resolve("files\\AITwk.xom");
         Path out = Files.createTempFile("testAITwk", ".xom");
         testXom(in, out);
     }
 
     @Test
     public void testCamTwk() throws Exception {
-        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\CamTwk.xom");
+        Path in = Worms3D.dir().resolve("files\\CamTwk.xom");
         Path out = Files.createTempFile("testCamTwk", ".xom");
         testXom(in, out);
     }

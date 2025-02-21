@@ -80,7 +80,7 @@ public class TGA {
         return fileName;
     }
 
-    public void writeToFile(Path filePath) throws IOException {
+    public void writeToFile(Path filePath, boolean addFooter) throws IOException {
         try (OutputStream os = Files.newOutputStream(filePath)) {
             os.write(idLength);
             os.write(colourMapType);
@@ -114,10 +114,12 @@ public class TGA {
             } else {
                 throw new IOException("TODO: " + format);
             }
-            // Write end of file signature
-            // http://justsolve.archiveteam.org/wiki/TGA
-            os.write(new byte[8]);
-            os.write("TRUEVISION-XFILE.\0".getBytes(StandardCharsets.UTF_8));
+            if (addFooter) {
+                // Write end of file signature
+                // http://justsolve.archiveteam.org/wiki/TGA
+                os.write(new byte[8]);
+                os.write("TRUEVISION-XFILE.\0".getBytes(StandardCharsets.UTF_8));
+            }
         }
     }
 

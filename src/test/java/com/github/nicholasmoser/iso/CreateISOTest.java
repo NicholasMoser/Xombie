@@ -8,14 +8,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import com.github.nicholasmoser.xom.Worms3D;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CreateISOTest {
 
   //Path wormsPath = Paths.get("D:\\Roms\\Gamecube&Wii\\Worms 3D (USA) (En,Fr).ciso");
-  Path outputDir = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D");
-  Path outputIso = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\worms.iso");
+  Path outputDir = Worms3D.dir();
+  Path outputIso = Worms3D.dir().resolve("worms.iso");
 
   @Test
   @Disabled("Skip for now")

@@ -24,7 +24,7 @@ public class TGATest {
         int expected = CRC32.getHash(tgaPath);
         TGA tga = TGAUtil.readFromFile(tgaPath);
         Path outPath = Files.createTempFile("testReadWriteTGA", ".tga");
-        tga.writeToFile(outPath);
+        tga.writeToFile(outPath, true);
         int actual = CRC32.getHash(outPath);
         assertThat(actual).isEqualTo(expected);
     }
@@ -35,7 +35,7 @@ public class TGATest {
         int expected = CRC32.getHash(tgaPath);
         TGA tga = TGAUtil.readFromFile(tgaPath);
         Path outPath = Files.createTempFile("testReadWriteTGA", ".tga");
-        tga.writeToFile(outPath);
+        tga.writeToFile(outPath, true);
         int actual = CRC32.getHash(outPath);
         assertThat(actual).isEqualTo(expected);
     }
@@ -46,7 +46,7 @@ public class TGATest {
         int expected = CRC32.getHash(tgaPath);
         TGA tga = TGAUtil.readFromFile(tgaPath);
         Path outPath = Files.createTempFile("testReadWriteTGA", ".tga");
-        tga.writeToFile(outPath);
+        tga.writeToFile(outPath, true);
         int actual = CRC32.getHash(outPath);
         assertThat(actual).isEqualTo(expected);
     }
