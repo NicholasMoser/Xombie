@@ -11,20 +11,20 @@ import java.nio.file.Path;
 public class TGA {
     // http://www.paulbourke.net/dataformats/tga/
     private byte idLength; //  The idlength is the length of a string located after the header.
+    /*
+        0 - No color map
+        1 - Color-mapped
+            Note about color-mapped: This Format uses a palette in RGB5_A1 Format,
+            the Pixel data is stored in 8x4 pixel tiles. 5 bits each for RGB, 1 for Alpha. 16 bits total (2-bytes).
+     */
     private byte colourMapType;
     /*
         Data Type field values:
         0  -  No image data included.
         1  -  Uncompressed, color-mapped images.
         2  -  Uncompressed, RGB images.
-        3  -  Uncompressed, black and white images.
-        9  -  Runlength encoded color-mapped images.
-       10  -  Runlength encoded RGB images.
-       11  -  Compressed, black and white images.
-       32  -  Compressed color-mapped data, using Huffman, Delta, and
-              runlength encoding.
-       33  -  Compressed color-mapped data, using Huffman, Delta, and
-              runlength encoding.  4-pass quadtree-type process.
+
+        The rest aren't relevant for Worms3D
      */
     private final byte dataTypeCode;
     private final short colourMapOrigin;
@@ -106,12 +106,17 @@ public class TGA {
                 // https://www.gc-forever.com/yagcd/chap17.html
                 // CI8 (compressed 8bit indexed)
                 //   Used for Icons and Banners on Memory Card.
-                //   This Format uses a palette in RGB5A1 Format, the Pixel data is stored in 8x4 pixel tiles.
-                int[] out = new int[data.length];
-                Gfx.decodeCI8Image(out, data, palette, width, height);
-                for (int value : out) {
-                    os.write(ByteUtils.fromInt32LE(Integer.reverseBytes(value)));
+                //   This Format uses a palette in RGB5_A1 Format, the Pixel data is stored in 8x4 pixel tiles.
+
+                // 8-bit index to 4-byte value
+                byte[] paletteData = palette.data();
+                System.out.println("Start");
+                for (int i = 0; i < paletteData.length; i += 4) {
+                    byte[] bytes = new byte[] {paletteData[i], paletteData[i + 1], paletteData[i + 2], paletteData[i + 3]};
+                    System.out.printf("0x%X: 0x%X\n", i / 4, ByteUtils.toInt32(bytes));
+                    os.write(bytes);
                 }
+                os.write(data);
             } else {
                 throw new IOException("TODO: " + format);
             }

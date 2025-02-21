@@ -16,56 +16,32 @@ import java.nio.file.Paths;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class XomWriterTest {
+
     @Test
-    public void testWriteDifferentSizeImage() throws Exception {
+    public void testRemoveContainer() throws Exception {
         Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3D\\files\\Bundles\\Bundle03.xom");
-        Path out = Files.createTempFile("testWriteDifferentSizeImage", ".xom");
-
-        // Read xom file and write it back out to file
+        Path out = Files.createTempFile("testModifyBundle03", ".xom");
         Xom xom = XomParser.parse(in);
-        XContainer license = xom.containers().get(13);
-        XContainer musyXDolby = xom.containers().get(14);
-        XContainer musyXDolbyText = xom.containers().get(15);
+        assertThat(xom.containers().size()).isEqualTo(22);
+        assertThat(xom.types().size()).isEqualTo(19);
 
-        // Read old palettes and TGAs
-        Palette palette1 = Palette.get(license, xom.containers());
-        Palette palette2 = Palette.get(musyXDolby, xom.containers());
-        Palette palette3 = Palette.get(musyXDolbyText, xom.containers());
-        TGA licenseTGA = TGAUtil.readFromXContainer(license, palette1);
-        TGA musyXDolbyTGA = TGAUtil.readFromXContainer(musyXDolby, palette2);
-        TGA musyXDolbyTextTGA = TGAUtil.readFromXContainer(musyXDolbyText, palette3);
-
-        // Read new TGAs
-        TGA newTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/NGCMC00.tga"));
-        // Replace TGAs
-        TGAUtil.replaceTGA(license, newTGA);
-        TGAUtil.replaceTGA(musyXDolby, newTGA);
-        TGAUtil.replaceTGA(musyXDolbyText, newTGA);
-        // Remove old palettes
+        // Remove palette containers
         XomModify.removeXContainer(16, xom);
         XomModify.removeXContainer(16, xom);
         XomModify.removeXContainer(16, xom);
         // Remove palette type
         xom.types().remove(14);
-        xom.types().add(14, new XomType(0, 0, "EBFCFD09-03F8-4C35-BB90-C3F84946A947", "XPalette"));
         // Update xom header with new type and container count
         XomHeader header = xom.header();
-        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes(), header.maxCount() - 3, header.rootCount()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
-        // TODO: Image is likely encoded wrong in the XCollection of XBytes...?
-
-        // Write TGAs to file
-        Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
-        Files.createDirectories(baseDir.resolve(licenseTGA.fileName()).getParent());
-        licenseTGA.writeToFile(baseDir.resolve(licenseTGA.fileName()));
-        musyXDolbyTGA.writeToFile(baseDir.resolve(musyXDolbyTGA.fileName()));
-        musyXDolbyTextTGA.writeToFile(baseDir.resolve(musyXDolbyTextTGA.fileName()));
+        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes() - 1, header.maxCount() - 3, header.rootCount()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
 
         // Write xom to file
         try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {
             XomWriter.write(xom, raf);
         }
-        Xom redo = XomParser.parse(out);
-        System.out.println();
+        Xom actual = XomParser.parse(out);
+        assertThat(actual.containers().size()).isEqualTo(19);
+        assertThat(actual.types().size()).isEqualTo(18);
     }
 
     @Test
@@ -76,7 +52,6 @@ public class XomWriterTest {
         // Read xom file and write it back out to file
         Xom xom = XomParser.parse(in);
 
-        //omWriter.write(xom, new RandomAccessFile("asd", "rw"));
         XContainer license = xom.containers().get(13);
         XContainer musyXDolby = xom.containers().get(14);
         XContainer musyXDolbyText = xom.containers().get(15);
@@ -89,24 +64,6 @@ public class XomWriterTest {
         TGA musyXDolbyTGA = TGAUtil.readFromXContainer(musyXDolby, palette2);
         TGA musyXDolbyTextTGA = TGAUtil.readFromXContainer(musyXDolbyText, palette3);
 
-        // Read new TGAs
-        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License.tga"));
-        TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby.tga"));
-        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext.tga"));
-        // Replace TGAs
-        TGAUtil.replaceTGA(license, newLicenseTGA);
-        TGAUtil.replaceTGA(musyXDolby, newMusyXDolbyTGA);
-        TGAUtil.replaceTGA(musyXDolbyText, newMusyXDolbyTextTGA);
-        // Remove old palettes
-        XomModify.removeXContainer(16, xom);
-        XomModify.removeXContainer(16, xom);
-        XomModify.removeXContainer(16, xom);
-        // Remove palette type
-        xom.types().remove(14);
-        // Update xom header with new type and container count
-        XomHeader header = xom.header();
-        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes() - 1, header.maxCount() - 3, header.rootCount()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
-
         // Write TGAs to file
         Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
         Files.createDirectories(baseDir.resolve(licenseTGA.fileName()).getParent());
@@ -114,12 +71,21 @@ public class XomWriterTest {
         musyXDolbyTGA.writeToFile(baseDir.resolve(musyXDolbyTGA.fileName()));
         musyXDolbyTextTGA.writeToFile(baseDir.resolve(musyXDolbyTextTGA.fileName()));
 
+        // Read new TGAs
+        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License.tga"));
+        TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby.tga"));
+        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext.tga"));
+
+        // Replace TGAs
+        TGAUtil.replaceTGA(license, newLicenseTGA);
+        TGAUtil.replaceTGA(musyXDolby, newMusyXDolbyTGA);
+        TGAUtil.replaceTGA(musyXDolbyText, newMusyXDolbyTextTGA);
+
         // Write xom to file
         try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {
             XomWriter.write(xom, raf);
         }
-        Xom redo = XomParser.parse(out);
-        System.out.println();
+        Xom actual = XomParser.parse(out);
     }
 
     @Test

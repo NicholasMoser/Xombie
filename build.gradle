@@ -26,6 +26,7 @@ dependencies {
     implementation 'com.j2html:j2html:1.6.0'
     implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
     implementation 'de.pdark:decentxml:1.4'
+    implementation 'io.kaitai:kaitai-struct-runtime:0.10'
     testImplementation(platform('org.junit:junit-bom:5.9.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testImplementation('org.assertj:assertj-core:3.23.1')

@@ -22,4 +22,5 @@ module com.github.nicholasmoser {
   requires org.xerial.sqlitejdbc;
     requires org.checkerframework.checker.qual;
     requires decentxml;
+    requires kaitai.struct.runtime;
 }

@@ -6,20 +6,15 @@ public class Gfx {
     /**
      * Decodes compressed 8bit indexed (CI8) bytes.
      *
-     * @param dst The output bytes.
      * @param src The input bytes.
      * @param palette The palette.
      * @param width The width of the image.
      * @param height The height of the image.
      */
-    public static void decodeCI8Image(int[] dst, byte[] src, Palette palette, int width, int height) {
+    public static int[] decodeCI8Image(byte[] src, Palette palette, int width, int height) {
+        int[] dst = new int[src.length];
         int srcIndex = 0;
         int[] pal = bytesToInts(palette.data());
-        String paletteFormat = palette.format();
-        if (!"kPaletteFormat_R8G8B8A8".equals(paletteFormat)) {
-            throw new IllegalArgumentException("TODO: " + paletteFormat);
-        }
-
         for (int y = 0; y < height; y += 4) {
             for (int x = 0; x < width; x += 8) {
                 for (int iy = 0; iy < 4; iy++, srcIndex += 8) {
@@ -31,6 +26,7 @@ public class Gfx {
                 }
             }
         }
+        return dst;
     }
 
     /**
