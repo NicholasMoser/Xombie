@@ -90,7 +90,7 @@ public class XomWriterTest {
     @Test
     public void testModifyBundle03() throws Exception {
         Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
-        Path out = Files.createTempFile("testModifyBundle03", ".xom");
+        Path out = Files.createTempFile("bundle03_", ".xom");
 
         // Read xom file and write it back out to file
         Xom xom = XomParser.parse(in);
@@ -100,9 +100,9 @@ public class XomWriterTest {
         XContainer musyXDolbyText = xom.containers().get(15);
 
         // Read new TGAs
-        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License.tga"));
-        TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby.tga"));
-        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext.tga"));
+        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License_Photoshop.tga"));
+        TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby_Photoshop.tga"));
+        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext_Photoshop.tga"));
 
         // Replace TGAs
         TGAUtil.replaceTGA(license, newLicenseTGA);

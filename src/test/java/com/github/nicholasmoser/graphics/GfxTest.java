@@ -16,7 +16,7 @@ public class GfxTest {
             expected[i] = (byte) random.nextInt();
         }
         byte[] tga = Gfx.convertCI8IndicesToTGA(expected, 100, 600);
-        byte[] actual = Gfx.convertTGAIndicesToCI8(tga, 100, 600);
+        byte[] actual = Gfx.convertTGAIndicesToCI8(tga, 100, 600, false);
         assertThat(expected).isEqualTo(actual);
     }
 }

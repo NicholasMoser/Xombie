@@ -23,8 +23,9 @@ public class TGAUtil {
         values.add(7, new XEnum("Format", IMAGE_FORMATS.inverse().get(tga.format()), tga.format()));
         values.remove(8);
         values.add(8, bytesToDataCollection(tga.data()));
-        values.remove(9);
-        values.add(9, new Ref("Palette", 0));
+        // TODO: Add ability to modify palettes
+        //values.remove(9);
+        //values.add(9, new Ref("Palette", 0));
     }
 
     private static XCollection bytesToDataCollection(byte[] bytes) {
@@ -62,6 +63,8 @@ public class TGAUtil {
                 .width((short) width.value())
                 .height((short) height.value())
                 .bitsPerPixel((byte) (palette != null ? 0x8 : 0x10))
+                // Bit 5 (0x20 or 0010 0000 in binary) is set
+                // This indicates that the image is stored top-left origin instead of the default bottom-left origin.
                 .imageDescriptor((byte) 0x20)
                 .data(bytes)
                 .fileName(name.value())
@@ -98,9 +101,13 @@ public class TGAUtil {
         tga.height(height);
         byte bitsPerPixel = bs.readOneByte();
         tga.bitsPerPixel(bitsPerPixel);
+        // Bit 5 (0x20 or 0010 0000 in binary) is set
+        // This indicates that the image is stored top-left origin instead of the default bottom-left origin.
         byte imageDescriptor = bs.readOneByte();
+        boolean flip = false;
         if (imageDescriptor != 0x20) {
-            throw new IOException("TODO");
+            // We need to flip the image. GameCube images use top-left origin but this is bottom-left origin.
+            flip = true;
         }
         tga.imageDescriptor(imageDescriptor);
         if (dataTypeCode == 2) {
@@ -112,7 +119,7 @@ public class TGAUtil {
             tga.palette(readPalette(bs, colorMapDepth, colorMapLength));
             int bytesToRead = (width * height * bitsPerPixel) / 8;
             byte[] buffer = bs.readNBytes(bytesToRead);
-            tga.data(Gfx.convertTGAIndicesToCI8(buffer, height, width));
+            tga.data(Gfx.convertTGAIndicesToCI8(buffer, height, width, flip));
         } else {
             throw new IOException("TODO: " + dataTypeCode);
         }

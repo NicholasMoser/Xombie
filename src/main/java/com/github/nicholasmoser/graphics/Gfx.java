@@ -84,13 +84,13 @@ public class Gfx {
      * @param width The width of the image.
      * @return The CI8 encoded bytes.
      */
-    public static byte[] convertTGAIndicesToCI8(byte[] data, int height, int width) {
+    public static byte[] convertTGAIndicesToCI8(byte[] data, int height, int width, boolean flip) {
         byte[] buffer = new byte[data.length];
         int dstIndex = 0;
         for (int y = 0; y < height; y += 4) {
             for (int x = 0; x < width; x += 8) {
                 for (int iy = 0; iy < 4; iy++, dstIndex += 8) {
-                    int tsrcIndex = ((height - 1) - (y + iy)) * width + x;
+                    int tsrcIndex = flip ? (y + iy) * width + x : ((height - 1) - (y + iy)) * width + x;
                     System.arraycopy(data, tsrcIndex, buffer, dstIndex, 8);
                 }
             }
