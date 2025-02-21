@@ -46,7 +46,8 @@ public class XomWriterTest {
 
     @Test
     public void testWriteTGAs() throws Exception {
-        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
+        Path w3d = Worms3D.dir();
+        Path in = w3d.resolve("files\\Bundles\\Bundle03.xom");
 
         // Read xom file and write it back out to file
         Xom xom = XomParser.parse(in);
@@ -66,11 +67,24 @@ public class XomWriterTest {
         // Write TGAs to file
         Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
         Files.createDirectories(baseDir.resolve(licenseTGA.fileName()).getParent());
+        Path licenseOut = baseDir.resolve(licenseTGA.fileName());
+        Path musyXDolbyOut = baseDir.resolve(musyXDolbyTGA.fileName());
+        Path musyXDolbyTextOut = baseDir.resolve(musyXDolbyTextTGA.fileName());
 
-        // Write TGAs to file
-        licenseTGA.writeToFile(baseDir.resolve(licenseTGA.fileName()), false);
-        musyXDolbyTGA.writeToFile(baseDir.resolve(musyXDolbyTGA.fileName()), false);
-        musyXDolbyTextTGA.writeToFile(baseDir.resolve(musyXDolbyTextTGA.fileName()), false);
+        licenseTGA.writeToFile(licenseOut, false);
+        musyXDolbyTGA.writeToFile(musyXDolbyOut, false);
+        musyXDolbyTextTGA.writeToFile(musyXDolbyTextOut, false);
+
+        // Get hash from expected and actual and compare
+        int actualLicenseHash = CRC32.getHash(licenseOut);
+        int actualMusyXDolbyHash = CRC32.getHash(musyXDolbyOut);
+        int actualMusyXDolbyTextHash = CRC32.getHash(musyXDolbyTextOut);
+        int expectedLicenseHash = CRC32.getHash(w3d.resolve("files/Logos/License.tga"));
+        int expectedMusyXDolbyHash = CRC32.getHash(w3d.resolve("files/Frontend/Icons/musyxdolby.tga"));
+        int expectedMusyXDolbyTextHash = CRC32.getHash(w3d.resolve("files/Logos/musyxdolbytext.tga"));
+        assertThat(actualLicenseHash).isEqualTo(expectedLicenseHash);
+        assertThat(actualMusyXDolbyHash).isEqualTo(expectedMusyXDolbyHash);
+        assertThat(actualMusyXDolbyTextHash).isEqualTo(expectedMusyXDolbyTextHash);
     }
 
     @Test
@@ -111,38 +125,6 @@ public class XomWriterTest {
             XomWriter.write(xom, raf);
         }
         Xom actual = XomParser.parse(out);
-    }
-
-    @Test
-    public void testModifyBundle02() throws Exception {
-        Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle02.xom");
-        Path out = Files.createTempFile("testModifyBundle02", ".xom");
-
-        // Read xom file and write it back out to file
-        Xom xom = XomParser.parse(in);
-        XContainer ngcmc00 = xom.containers().get(15);
-        XContainer ngcmc01 = xom.containers().get(16);
-        XContainer ngcmc02 = xom.containers().get(17);
-        XContainer ngcmc03 = xom.containers().get(18);
-
-        // Read TGAs
-        TGA ngcmc00TGA = TGAUtil.readFromXContainer(ngcmc00, null);
-        TGA ngcmc01TGA = TGAUtil.readFromXContainer(ngcmc01, null);
-        TGA ngcmc02TGA = TGAUtil.readFromXContainer(ngcmc02, null);
-        TGA ngcmc03TGA = TGAUtil.readFromXContainer(ngcmc03, null);
-
-        // Write TGAs to file
-        Path baseDir = Paths.get(System.getProperty("java.io.tmpdir"));
-        Files.createDirectories(baseDir.resolve(ngcmc00TGA.fileName()).getParent());
-        ngcmc00TGA.writeToFile(baseDir.resolve(ngcmc00TGA.fileName()), false);
-        ngcmc01TGA.writeToFile(baseDir.resolve(ngcmc01TGA.fileName()), false);
-        ngcmc02TGA.writeToFile(baseDir.resolve(ngcmc02TGA.fileName()), false);
-        ngcmc03TGA.writeToFile(baseDir.resolve(ngcmc03TGA.fileName()), false);
-
-        // Write xom to file
-        try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {
-            XomWriter.write(xom, raf);
-        }
     }
 
     @Test

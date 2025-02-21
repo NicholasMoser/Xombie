@@ -86,8 +86,10 @@ public class TGAUtil {
         byte dataTypeCode = bs.readOneByte();
         tga.dataTypeCode(dataTypeCode);
         tga.colourMapOrigin(bs.readShortLE());
-        tga.colourMapLength(bs.readShortLE());
-        tga.colourMapDepth(bs.readOneByte());
+        short colorMapLength = bs.readShortLE();
+        tga.colourMapLength(colorMapLength);
+        byte colorMapDepth = bs.readOneByte();
+        tga.colourMapDepth(colorMapDepth);
         tga.xOrigin(bs.readShortLE());
         tga.yOrigin(bs.readShortLE());
         short width = bs.readShortLE();
@@ -101,12 +103,30 @@ public class TGAUtil {
             throw new IOException("TODO");
         }
         tga.imageDescriptor(imageDescriptor);
-        int bytesToRead = (width * height * bitsPerPixel) / 8;
-        tga.data(bs.readNBytes(bytesToRead));
-        tga.format("kImageFormat_A8R8G8B8");
-        if (bitsPerPixel != (byte) 32 && dataTypeCode != 2) {
-            throw new IOException(String.format("TODO: bitsPerPixel %d dataTypeCode %d", bitsPerPixel, dataTypeCode));
+        if (dataTypeCode == 2) {
+            tga.format("kImageFormat_A8R8G8B8");
+            int bytesToRead = (width * height * bitsPerPixel) / 8;
+            tga.data(bs.readNBytes(bytesToRead));
+        } else if (dataTypeCode == 1) {
+            tga.format("kImageFormat_NgcCI8");
+            tga.palette(readPalette(bs, colorMapDepth, colorMapLength));
+            int bytesToRead = (width * height * bitsPerPixel) / 8;
+            byte[] buffer = bs.readNBytes(bytesToRead);
+            tga.data(Gfx.convertTGAIndicesToCI8(buffer, height, width));
+        } else {
+            throw new IOException("TODO: " + dataTypeCode);
         }
         return tga.build();
+    }
+
+    private static Palette readPalette(ByteStream bs, byte colorMapDepth, short colorMapLength) throws IOException {
+        if (colorMapDepth <= 0) {
+            throw new IllegalArgumentException("Invalid colorMapDepth: " + colorMapDepth);
+        } else if (colorMapLength <= 0) {
+            throw new IllegalArgumentException("Invalid colorMapLength: " + colorMapLength);
+        }
+        int colorByteSize = colorMapDepth / 8;
+        byte[] colorMap = bs.readNBytes(colorByteSize * colorMapLength);
+        return new Palette(8, 0, "kPaletteFormat_R8G8B8A8", colorMap);
     }
 }
