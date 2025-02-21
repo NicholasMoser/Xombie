@@ -1,7 +1,5 @@
-package com.github.nicholasmoser.gfx;
+package com.github.nicholasmoser.graphics;
 
-import com.github.nicholasmoser.graphics.TGA;
-import com.github.nicholasmoser.graphics.TGAUtil;
 import com.github.nicholasmoser.kaitai.Tga;
 import com.github.nicholasmoser.utils.CRC32;
 import org.junit.jupiter.api.Test;

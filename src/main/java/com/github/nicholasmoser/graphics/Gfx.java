@@ -1,7 +1,5 @@
 package com.github.nicholasmoser.graphics;
 
-import com.github.nicholasmoser.utils.ByteUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -77,16 +75,26 @@ public class Gfx {
         return buffer;
     }
 
-    public static byte[] convertCI8ColorSpaceToTGA(byte[] data) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length);
-        try {
-            for (int i = 0; i < data.length; i += 4) {
-                byte[] bytes = new byte[] {data[i], data[i + 1], data[i + 2], data[i + 3]};
-                baos.write(bytes);
+    /**
+     * Converts TGA encoded image bytes to CI8 encoded image index bytes. TGA encoded image bytes specify
+     * (width) x (height) color map indices.
+     *
+     * @param data The TGA encoded bytes.
+     * @param height The height of the image.
+     * @param width The width of the image.
+     * @return The CI8 encoded bytes.
+     */
+    public static byte[] convertTGAIndicesToCI8(byte[] data, int height, int width) {
+        byte[] buffer = new byte[data.length];
+        int dstIndex = 0;
+        for (int y = 0; y < height; y += 4) {
+            for (int x = 0; x < width; x += 8) {
+                for (int iy = 0; iy < 4; iy++, dstIndex += 8) {
+                    int tsrcIndex = (y + iy) * width + x;
+                    System.arraycopy(data, tsrcIndex, buffer, dstIndex, 8);
+                }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-        return baos.toByteArray();
+        return buffer;
     }
 }

@@ -109,7 +109,7 @@ public class TGA {
                 //   This Format uses a palette in RGB5_A1 Format, the Pixel data is stored in 8x4 pixel tiles.
 
                 // 8-bit index maps to 4-byte color value
-                os.write(Gfx.convertCI8ColorSpaceToTGA(palette.data()));
+                os.write(palette.data());
                 os.write(Gfx.convertCI8IndicesToTGA(data, height, width));
             } else {
                 throw new IOException("TODO: " + format);
