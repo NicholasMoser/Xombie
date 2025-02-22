@@ -66,6 +66,32 @@ public class XomViewerController {
         }
     }
 
+    public void expandAll() {
+        expand(tree.getRoot());
+    }
+
+    private void expand(TreeItem<?> item){
+        if(item != null && !item.isLeaf()){
+            item.setExpanded(true);
+            for(TreeItem<?> child:item.getChildren()){
+                expand(child);
+            }
+        }
+    }
+
+    public void collapseAll() {
+        collapse(tree.getRoot());
+    }
+
+    private void collapse(TreeItem<?> item){
+        if(item != null && !item.isLeaf()){
+            item.setExpanded(false);
+            for(TreeItem<?> child:item.getChildren()){
+                collapse(child);
+            }
+        }
+    }
+
     private static String getId(String name, int index) {
         return String.format("%s [%d]", name, index);
     }
