@@ -33,7 +33,7 @@ public class XomWriterTest {
         xom.types().remove(14);
         // Update xom header with new type and container count
         XomHeader header = xom.header();
-        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes() - 1, header.maxCount() - 3, header.rootCount()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
+        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes() - 1, header.containerCount() - 3, header.rootIndex()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
 
         // Write xom to file
         try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {

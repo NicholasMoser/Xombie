@@ -82,8 +82,8 @@ public class XomWriter {
         raf.write(ByteUtils.fromUint32(header.flag()));
         raf.write(new byte[0x10]);
         raf.write(ByteUtils.fromUint32LE(header.numberOfTypes()));
-        raf.write(ByteUtils.fromUint32LE(header.maxCount()));
-        raf.write(ByteUtils.fromUint32LE(header.rootCount()));
+        raf.write(ByteUtils.fromUint32LE(header.containerCount()));
+        raf.write(ByteUtils.fromUint32LE(header.rootIndex()));
         raf.write(new byte[0x1C]);
     }
 }

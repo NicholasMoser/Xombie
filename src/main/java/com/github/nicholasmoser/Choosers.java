@@ -82,6 +82,22 @@ public class Choosers {
   }
 
   /**
+   * Asks the user to select an input XOM file.
+   *
+   * @param initialDirectory The location to set the directory chooser to start at.
+   * @return An optional input XOM. Empty if none is chosen.
+   */
+  public static Optional<Path> getInputXOM(File initialDirectory) {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Select Input XOM File");
+    fileChooser.setInitialDirectory(initialDirectory);
+    ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("XOM File (*.xom)", "*.xom");
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    File selection = fileChooser.showOpenDialog(null);
+    return selection != null ? Optional.of(selection.toPath()) : Optional.empty();
+  }
+
+  /**
    * Asks the user to select an input audio file.
    *
    * @return An optional input audio file. Empty if none is chosen.

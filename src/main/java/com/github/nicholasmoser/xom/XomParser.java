@@ -116,9 +116,9 @@ public class XomParser {
         int flag = bs.readWord(); // 1 or 2
         bs.skipNBytes(0x10);
         int numberOfTypes = bs.readLEWord();
-        int maxCount = bs.readLEWord();
-        int rootCount = bs.readLEWord();
+        int containerCount = bs.readLEWord();
+        int rootIndex = bs.readLEWord();
         bs.skipNBytes(0x1C);
-        return new XomHeader(flag, numberOfTypes, maxCount, rootCount);
+        return new XomHeader(flag, numberOfTypes, containerCount, rootIndex);
     }
 }

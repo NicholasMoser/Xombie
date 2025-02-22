@@ -5,6 +5,7 @@ module com.github.nicholasmoser {
 
   opens com.github.nicholasmoser to javafx.fxml;
   opens com.github.nicholasmoser.tools to javafx.fxml;
+  opens com.github.nicholasmoser.xom to javafx.fxml;
 
   requires com.google.common;
 
@@ -20,7 +21,7 @@ module com.github.nicholasmoser {
   requires org.json;
   requires com.j2html;
   requires org.xerial.sqlitejdbc;
-    requires org.checkerframework.checker.qual;
-    requires decentxml;
-    requires kaitai.struct.runtime;
+  requires org.checkerframework.checker.qual;
+  requires decentxml;
+  requires kaitai.struct.runtime;
 }

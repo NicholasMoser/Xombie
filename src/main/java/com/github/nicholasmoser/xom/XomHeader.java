@@ -20,12 +20,12 @@ package com.github.nicholasmoser.xom;
  *
  * @param flag The flag used to determine if the xom has a GUID field
  * @param numberOfTypes The number of different types used in this xom
- * @param maxCount Total number of XContainers.
- * @param rootCount Number of XContainers attached to the root.
+ * @param containerCount Total number of XContainers.
+ * @param rootIndex The index of the root element.
  */
 public record XomHeader(int flag, // 0x4
                         int numberOfTypes, // 0x18
-                        int maxCount, // 0x1C
-                        int rootCount) // 0x20
+                        int containerCount, // 0x1C
+                        int rootIndex) // 0x20
 {
 }

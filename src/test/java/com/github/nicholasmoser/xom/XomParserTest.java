@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -46,8 +45,8 @@ public class XomParserTest {
         XomHeader header = xom.header();
         assertThat(header.flag()).isEqualTo(2);
         assertThat(header.numberOfTypes()).isEqualTo(18);
-        assertThat(header.maxCount()).isEqualTo(23);
-        assertThat(header.rootCount()).isEqualTo(5);
+        assertThat(header.containerCount()).isEqualTo(23);
+        assertThat(header.rootIndex()).isEqualTo(5);
 
         // Check types
         List<XomType> types = xom.types();
@@ -173,8 +172,8 @@ public class XomParserTest {
         XomHeader header = xom.header();
         assertThat(header.flag()).isEqualTo(2);
         assertThat(header.numberOfTypes()).isEqualTo(13);
-        assertThat(header.maxCount()).isEqualTo(100);
-        assertThat(header.rootCount()).isEqualTo(100);
+        assertThat(header.containerCount()).isEqualTo(100);
+        assertThat(header.rootIndex()).isEqualTo(100);
 
         // Check types
         List<XomType> types = xom.types();
@@ -292,8 +291,8 @@ public class XomParserTest {
         XomHeader header = xom.header();
         assertThat(header.flag()).isEqualTo(2);
         assertThat(header.numberOfTypes()).isEqualTo(6);
-        assertThat(header.maxCount()).isEqualTo(50);
-        assertThat(header.rootCount()).isEqualTo(50);
+        assertThat(header.containerCount()).isEqualTo(50);
+        assertThat(header.rootIndex()).isEqualTo(50);
 
         // Check types
         List<XomType> types = xom.types();
