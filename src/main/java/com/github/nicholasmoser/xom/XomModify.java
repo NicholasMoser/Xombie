@@ -23,9 +23,16 @@ public class XomModify {
         removeXContainer(index, xom);
     }
 
+    /**
+     * Remove an XContainer from the xom and update all reference numbers to account for the removal.
+     *
+     * @param index The index of the type to remove.
+     * @param xom The xom to remove it from.
+     */
     public static void removeXContainer(int index, Xom xom) {
         List<XContainer> containers = xom.containers();
         containers.remove(index);
+        xom.header().decrementContainerCount();
         // Update reference values to point to adjusted values, basically subtract 1 if after the removed container
         for (XContainer current : containers) {
             for (Value value : current.values()) {
@@ -41,6 +48,17 @@ public class XomModify {
                 }
             }
         }
+    }
+
+    /**
+     * Remove a type from the list of Xom types.
+     *
+     * @param i The index of the type to remove.
+     * @param xom The xom to remove the type from.
+     */
+    public static void removeXType(int i, Xom xom) {
+        xom.types().remove(i);
+        xom.header().decrementNumberOfTypes();
     }
 
     private static void updateReference(Ref ref, int index) {

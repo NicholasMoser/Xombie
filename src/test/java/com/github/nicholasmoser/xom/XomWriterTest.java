@@ -30,10 +30,7 @@ public class XomWriterTest {
         XomModify.removeXContainer(16, xom);
         XomModify.removeXContainer(16, xom);
         // Remove palette type
-        xom.types().remove(14);
-        // Update xom header with new type and container count
-        XomHeader header = xom.header();
-        xom = new Xom(new XomHeader(header.flag(), header.numberOfTypes() - 1, header.containerCount() - 3, header.rootIndex()), xom.types(), xom.schmType(), xom.stringTable(), xom.containers());
+        XomModify.removeXType(14, xom);
 
         // Write xom to file
         try (RandomAccessFile raf = new RandomAccessFile(out.toFile(), "rw")) {

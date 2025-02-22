@@ -17,15 +17,48 @@ package com.github.nicholasmoser.xom;
  *     <li>Maps/w.xom</li>
  *     <li>Maps/wormisland.xom</li>
  * </ul>
- *
- * @param flag The flag used to determine if the xom has a GUID field
- * @param numberOfTypes The number of different types used in this xom
- * @param containerCount Total number of XContainers.
- * @param rootIndex The index of the root element.
  */
-public record XomHeader(int flag, // 0x4
-                        int numberOfTypes, // 0x18
-                        int containerCount, // 0x1C
-                        int rootIndex) // 0x20
-{
+public class XomHeader {
+
+    private final int flag;
+    private final int rootIndex;
+    private int containerCount;
+    private int numberOfTypes;
+
+    /**
+     * @param flag           The flag used to determine if the xom has a GUID field
+     * @param numberOfTypes  The number of different types used in this xom
+     * @param containerCount Total number of XContainers.
+     * @param rootIndex      The index of the root element.
+     */
+    public XomHeader(int flag, int numberOfTypes, int containerCount, int rootIndex) {
+        this.flag = flag;
+        this.numberOfTypes = numberOfTypes;
+        this.containerCount = containerCount;
+        this.rootIndex = rootIndex;
+    }
+
+    public int flag() {
+        return flag;
+    }
+
+    public int rootIndex() {
+        return rootIndex;
+    }
+
+    public int containerCount() {
+        return containerCount;
+    }
+
+    public int numberOfTypes() {
+        return numberOfTypes;
+    }
+
+    public void decrementContainerCount() {
+        containerCount -= 1;
+    }
+
+    public void decrementNumberOfTypes() {
+        numberOfTypes -= 1;
+    }
 }
