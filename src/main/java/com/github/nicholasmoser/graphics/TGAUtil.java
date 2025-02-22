@@ -108,6 +108,7 @@ public class TGAUtil {
         if (imageDescriptor != 0x20) {
             // We need to flip the image. GameCube images use top-left origin but this is bottom-left origin.
             flip = true;
+            imageDescriptor = (byte) (imageDescriptor | 0x20);
         }
         tga.imageDescriptor(imageDescriptor);
         if (dataTypeCode == 2) {
