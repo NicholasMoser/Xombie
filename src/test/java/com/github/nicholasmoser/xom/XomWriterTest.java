@@ -85,9 +85,21 @@ public class XomWriterTest {
     }
 
     @Test
+    public void testCheckBundle03() throws Exception {
+        // Test loading a CI8 image from bundle03 and saving it as an RGBA TGA file. Used to debug CI8 code.
+        Path in = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3DKerfuffle\\files\\Bundles\\bundle03.xom");
+        Path out = Files.createTempFile("checkBundle03", ".tga");
+        Xom xom = XomParser.parse(in);
+        XContainer license = xom.containers().get(13);
+        Palette palette = Palette.get(license, xom.containers());
+        TGA tga = TGAUtil.readFromXContainer(license, palette);
+        tga.writeToFile(out, false, "kImageFormat_NgcCI8");
+    }
+
+    @Test
     public void testModifyBundle03() throws Exception {
         Path in = Worms3D.dir().resolve("files\\Bundles\\Bundle03.xom");
-        Path out = Files.createTempFile("bundle03_", ".xom");
+        Path out = Paths.get("E:\\GNTLargeFiles\\Extracted\\Worms3DKerfuffle\\files\\Bundles\\bundle03.xom");
 
         // Read xom file and write it back out to file
         Xom xom = XomParser.parse(in);
@@ -97,9 +109,9 @@ public class XomWriterTest {
         XContainer musyXDolbyText = xom.containers().get(15);
 
         // Read new TGAs
-        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License_Photoshop.tga"));
+        TGA newLicenseTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/License_RGBA_To_Index.tga"));
         TGA newMusyXDolbyTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolby_Photoshop.tga"));
-        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext_Photoshop.tga"));
+        TGA newMusyXDolbyTextTGA = TGAUtil.readFromFile(Paths.get("src/test/resources/tga/musyxdolbytext_RGBA_To_Index.tga"));
 
         // Replace TGAs
         TGAUtil.replaceTGA(license, newLicenseTGA);

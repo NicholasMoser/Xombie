@@ -103,6 +103,9 @@ public class TGAUtil {
         tga.bitsPerPixel(bitsPerPixel);
         // Bit 5 (0x20 or 0010 0000 in binary) is set
         // This indicates that the image is stored top-left origin instead of the default bottom-left origin.
+        // We usually only ever see 0x20 or 0x8:
+        // 0x08: Bottom-left origin, 8-bit alpha.
+        // 0x20: Top-left origin, no alpha.
         byte imageDescriptor = bs.readOneByte();
         boolean flip = false;
         if (imageDescriptor != 0x20) {
@@ -135,6 +138,16 @@ public class TGAUtil {
         }
         int colorByteSize = colorMapDepth / 8;
         byte[] colorMap = bs.readNBytes(colorByteSize * colorMapLength);
-        return new Palette(8, 0, "kPaletteFormat_R8G8B8A8", colorMap);
+        byte[] out = swap(colorMap);
+        return new Palette(8, 0, "kPaletteFormat_R8G8B8A8", out);
+    }
+
+    private static byte[] swap(byte[] colorMap) {
+        byte[] buffer = new byte[colorMap.length];
+        for (int i = 0; i < colorMap.length; i += 2) {
+            buffer[i] = colorMap[i + 1];
+            buffer[i + 1] = colorMap[i];
+        }
+        return buffer;
     }
 }

@@ -81,6 +81,10 @@ public class TGA {
     }
 
     public void writeToFile(Path filePath, boolean addFooter) throws IOException {
+        writeToFile(filePath, addFooter, format);
+    }
+
+    public void writeToFile(Path filePath, boolean addFooter, String outputFormat) throws IOException {
         try (OutputStream os = Files.newOutputStream(filePath)) {
             os.write(idLength);
             os.write(colourMapType);
@@ -95,14 +99,14 @@ public class TGA {
             os.write(bitsPerPixel);
             os.write(imageDescriptor);
             // Data bytes are stored in RGBA, write them out differently based on format
-            if ("kImageFormat_A8R8G8B8".equals(format)) {
+            if (ARGBtoARGB(outputFormat)) {
                 for (int i = 0; i < data.length; i += 4) {
                     os.write(data[i + 2]); // B
                     os.write(data[i + 1]); // G
                     os.write(data[i]);     // R
                     os.write(data[i + 3]); // A
                 }
-            } else if ("kImageFormat_NgcCI8".equals(format)) {
+            } else if (CI8toCI8(outputFormat)) {
                 // https://www.gc-forever.com/yagcd/chap17.html
                 // CI8 (compressed 8bit indexed)
                 //   Used for Icons and Banners on Memory Card.
@@ -111,6 +115,11 @@ public class TGA {
                 // 8-bit index maps to 4-byte color value
                 os.write(palette.data());
                 os.write(Gfx.convertCI8IndicesToTGA(data, height, width));
+            } else if (CI8toARGB(outputFormat)) {
+                int[] out = Gfx.decodeCI8Image(data, palette, width, height);
+                for (int value : out) {
+                    os.write(ByteUtils.fromInt32LE(Integer.reverseBytes(value)));
+                }
             } else {
                 throw new IOException("TODO: " + format);
             }
@@ -121,6 +130,18 @@ public class TGA {
                 os.write("TRUEVISION-XFILE.\0".getBytes(StandardCharsets.UTF_8));
             }
         }
+    }
+
+    public boolean CI8toCI8(String outputFormat) {
+        return "kImageFormat_NgcCI8".equals(format) && "kImageFormat_NgcCI8".equals(outputFormat);
+    }
+
+    public boolean ARGBtoARGB(String outputFormat) {
+        return "kImageFormat_A8R8G8B8".equals(format) && "kImageFormat_A8R8G8B8".equals(outputFormat);
+    }
+
+    public boolean CI8toARGB(String outputFormat) {
+        return "kImageFormat_NgcCI8".equals(format) && "kImageFormat_A8R8G8B8".equals(outputFormat);
     }
 
     public static class Builder {
