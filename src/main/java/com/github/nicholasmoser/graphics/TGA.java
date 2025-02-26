@@ -80,6 +80,14 @@ public class TGA {
         return fileName;
     }
 
+    public byte colourMapDepth() {
+        return colourMapDepth;
+    }
+
+    public Palette palette() {
+        return palette;
+    }
+
     public void writeToFile(Path filePath, boolean addFooter) throws IOException {
         writeToFile(filePath, addFooter, format);
     }

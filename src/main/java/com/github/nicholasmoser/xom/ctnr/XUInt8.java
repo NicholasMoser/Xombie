@@ -8,7 +8,12 @@ public class XUInt8 implements Value {
     private final String name;
     private final int value;
 
-    private XUInt8(String name, int value) {
+    public XUInt8(int value) {
+        this.name = null;
+        this.value = value;
+    }
+
+    public XUInt8(String name, int value) {
         this.name = name;
         this.value = value;
     }

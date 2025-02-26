@@ -3,6 +3,7 @@ package com.github.nicholasmoser.graphics;
 import com.github.nicholasmoser.utils.ByteStream;
 import com.github.nicholasmoser.xom.ctnr.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,8 +14,8 @@ import static com.github.nicholasmoser.xom.ctnr.XEnumMaps.IMAGE_FORMATS;
 
 public class TGAUtil {
 
-    public static void replaceTGA(XContainer container, TGA tga) {
-        List<Value> values = container.values();
+    public static void replaceTGA(XContainer imageContainer, TGA tga, XContainer paletteContainer) {
+        List<Value> values = imageContainer.values();
         values.remove(1);
         values.add(1, new XUInt16("Width", tga.width()));
         values.remove(2);
@@ -23,15 +24,30 @@ public class TGAUtil {
         values.add(7, new XEnum("Format", IMAGE_FORMATS.inverse().get(tga.format()), tga.format()));
         values.remove(8);
         values.add(8, bytesToDataCollection(tga.data()));
-        // TODO: Add ability to modify palettes
-        //values.remove(9);
-        //values.add(9, new Ref("Palette", 0));
+        if (paletteContainer != null) {
+            byte[] bytes = tga.palette().data();
+            if (tga.colourMapDepth() == 24) {
+                XCollection collection = TGAUtil.bytesToXUint8Collection(bytes);
+                paletteContainer.values().remove(3);
+                paletteContainer.values().add(3, collection);
+            } else {
+                throw new IllegalArgumentException("TODO: " + tga.colourMapDepth());
+            }
+        }
     }
 
     private static XCollection bytesToDataCollection(byte[] bytes) {
         List<Value> values = new ArrayList<>(bytes.length);
         for (byte datum : bytes) {
             values.add(new XByte(datum));
+        }
+        return new XCollection("Data", values);
+    }
+
+    private static XCollection bytesToXUint8Collection(byte[] bytes) {
+        List<Value> values = new ArrayList<>(bytes.length);
+        for (byte datum : bytes) {
+            values.add(new XUInt8("Data", datum));
         }
         return new XCollection("Data", values);
     }
@@ -138,15 +154,43 @@ public class TGAUtil {
         }
         int colorByteSize = colorMapDepth / 8;
         byte[] colorMap = bs.readNBytes(colorByteSize * colorMapLength);
-        byte[] out = swap(colorMap);
-        return new Palette(8, 0, "kPaletteFormat_R8G8B8A8", out);
+        if (colorMapDepth == 24) {
+            colorMap = addAlphaBytes(colorMap);
+        }
+        // TODO: Add back below byte swap when colorMapDepth == 32?
+        //byte[] out = swap(colorMap);
+        return new Palette(8, 0, "kPaletteFormat_R8G8B8A8", colorMap);
     }
 
-    private static byte[] swap(byte[] colorMap) {
-        byte[] buffer = new byte[colorMap.length];
-        for (int i = 0; i < colorMap.length; i += 2) {
-            buffer[i] = colorMap[i + 1];
-            buffer[i + 1] = colorMap[i];
+    /**
+     * Add a 0xFF byte of alpha to a byte array of 3-byte RGB color sequences.
+     *
+     * @param rgbBytes The RGB bytes.
+     * @return The RGBA bytes.
+     */
+    private static byte[] addAlphaBytes(byte[] rgbBytes) {
+        // Add 0xFF alpha to end of each 3-byte sequence
+        ByteArrayOutputStream rgbaBytes = new ByteArrayOutputStream();
+        for (int i = 0; i < rgbBytes.length; i += 3) {
+            rgbaBytes.write(rgbBytes[i]);
+            rgbaBytes.write(rgbBytes[i + 1]);
+            rgbaBytes.write(rgbBytes[i + 2]);
+            rgbaBytes.write(0xFF);
+        }
+        return rgbaBytes.toByteArray();
+    }
+
+    /**
+     * Swap every 2-bytes with each other.
+     *
+     * @param bytes The bytes to swap.
+     * @return The swapped bytes.
+     */
+    private static byte[] swap(byte[] bytes) {
+        byte[] buffer = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i += 2) {
+            buffer[i] = bytes[i + 1];
+            buffer[i + 1] = bytes[i];
         }
         return buffer;
     }

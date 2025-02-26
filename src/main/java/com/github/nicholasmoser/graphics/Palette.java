@@ -1,12 +1,7 @@
 package com.github.nicholasmoser.graphics;
 
-import com.github.nicholasmoser.utils.ByteUtils;
 import com.github.nicholasmoser.xom.ctnr.*;
-import org.checkerframework.checker.units.qual.A;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Palette {
